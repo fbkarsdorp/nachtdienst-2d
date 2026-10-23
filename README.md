@@ -35,7 +35,11 @@ Use headphones: the room is mostly sound.
 
 ### On a phone
 
-Hold the phone sideways. Everything is tapped: the room's things, the tags, the drawn keys of the typewriter (which
+Hold the phone sideways (with the rotation lock on, an upright phone shows the room turned a quarter, so it can still
+be read sideways). A tap leaves a ring of ink and, for a moment, the name of what was tapped; a tap just beside
+something small still finds it. Swipe through the cards being read, or down to put them away. The phone's back button
+or back swipe steps back in the room instead of leaving the archive. The screen stays on during a night, the night is
+saved when the phone is put away, and on Android the heavier sounds come with a small vibration. Everything is tapped: the room's things, the tags, the drawn keys of the typewriter (which
 has its own backspace, return and space bar on a phone, so the phone's keyboard never covers the room). On a small
 screen the tags are drawn larger with taller tap areas, cards are read closer, and the help speaks of tapping. The
 first tap asks for the whole screen in landscape where the browser allows it (Android); on an iPhone, add the page to
@@ -115,6 +119,7 @@ js/views.js        the room, the table, a cabinet up close, the archive behind t
 js/views2.js       the map, typewriter, clock, window, door, cabinet V, halves, strongbox, title, endings
 js/night.js        the director: leaks, room locks waking, enactments, reactions
 js/dev.js          a back door for testing (below)
+js/touch.js        the phone: fingertip reach, tap marks, swipes, back button, sideways, wake lock, vibration
 js/main.js         boot, the frame loop, pointer and keys
 data/              nights, map geometry, gazetteer, archive (converted from the original's game/data)
 fonts/, sounds/    Special Elite, Caveat, Homemade Apple, IM Fell English; card sounds

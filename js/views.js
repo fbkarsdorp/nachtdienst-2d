@@ -643,7 +643,7 @@ const Reader = {
     const g = GROW(), widths = b.map(([l]) => C.measureText(l).width + 70), gap = 44, total = widths.reduce((s, w2) => s + w2 * g + gap, -gap), by = PHONE ? 1010 : 834;
     let bx = W / 2 - total / 2;
     b.forEach(([label, fn, kb], i) => { const bw = widths[i] * g; UI.button(label, bx + bw / 2, by, { size: 32, onClick: fn, w: widths[i] }); if (kb && !TOUCH) handText(kb, bx + bw / 2, 892, 18, 'rgba(240,230,210,.45)', { font: FONT.type, align: 'center', j: 0 }); bx += bw + gap; });
-    if (R.list.length > 1) handText(`${R.i + 1} / ${R.list.length}`, PHONE ? x + w + 70 : W / 2, PHONE ? y + h / 2 + 90 : y - 24, 26, 'rgba(240,230,210,.7)', { font: FONT.hand, align: 'center', j: 0 });
+    if (R.list.length > 1) handText(`${R.i + 1} / ${R.list.length}` + (TOUCH ? '  · veeg ⇆' : ''), PHONE ? x + w + 70 : W / 2, PHONE ? y + h / 2 + 90 : y - 24, 26, 'rgba(240,230,210,.7)', { font: FONT.hand, align: 'center', j: 0 });
     if (back && !(card.r && card.r.original) && card.kind !== 'note') handText('(achterkant)', x + 40, y + 50, 24, '#8A7F92', { font: FONT.hand, j: 0 });
   },
   step(d) { const R = G.reader; R.i = (R.i + d + R.list.length) % R.list.length; R.back = false; R.flipT = -9; R.t0 = T - .25; G.markRead(R.list[R.i]); SND.card(); },

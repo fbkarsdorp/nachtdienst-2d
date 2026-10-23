@@ -295,10 +295,10 @@ function twKeys() {
   }
   return out;
 }
-function focusKeys(on) {
+function focusKeys(on, soft = false) {
   const k = document.getElementById('keys'); if (!k) return;
-  if (on && TOUCH) { k.blur(); return; }   // with a finger the drawn keys are the keyboard; the phone's own would cover the room
-  if (on) { k.value = ''; try { k.focus({ preventScroll: true }); } catch (e) { k.focus(); } } else k.blur();
+  if (on && TOUCH && !soft) { k.blur(); return; }   // with a finger the drawn keys are the keyboard; the phone's own would cover the room
+  if (on) { k.value = ' '; try { k.focus({ preventScroll: true }); } catch (e) { k.focus(); } } else k.blur();
 }
 
 // ---------- the clock ----------
@@ -624,7 +624,7 @@ V.title = {
     if (save) { UI.button(`Verder met nacht ${save.seed}`, W / 2, y, { size: 40, onClick: () => beginNight(save.seed, save.name, true) }); y += 100; }
     UI.button(save ? 'Een nieuwe nacht' : 'Begin de nacht', W / 2, y, { size: 40, onClick: () => beginNight(this.seed, this.name, false) }); y += 100;
     UI.button(`Nacht nr. ${this.seed}  ↻`, W / 2 - 200, y, { size: 28, onClick: () => { this.seed = NIGHT_SEEDS[Math.floor(Math.random() * NIGHT_SEEDS.length)]; } });
-    UI.button(this.editing ? `Naam: ${this.name}${Math.floor(T * 2) % 2 ? '|' : ' '}` : this.name ? `Naam: ${this.name}` : 'Je naam (voor de kaart)', W / 2 + 200, y, { size: 28, id: 'name', onClick: () => { this.editing = true; focusKeys(true); } });
+    UI.button(this.editing ? `Naam: ${this.name}${Math.floor(T * 2) % 2 ? '|' : ' '}` : this.name ? `Naam: ${this.name}` : 'Je naam (voor de kaart)', W / 2 + 200, y, { size: 28, id: 'name', onClick: () => { this.editing = true; focusKeys(true, true); } });
     y += 90;
     UI.button(SND.on ? 'Geluid: aan' : 'Geluid: uit', W / 2, y, { size: 26, id: 'snd', onClick: () => SND.toggle() });
     handText('Met koptelefoon. Verhalen: Nederlandse Volksverhalenbank, Meertens Instituut (KNAW).', W / 2, H - 40, 26, 'rgba(230,220,200,.55)', { font: FONT.hand, align: 'center', j: 0 });

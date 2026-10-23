@@ -50,6 +50,7 @@ function frame(now) {
     if (G.busy && G.view !== 'title') UI.hits = UI.hits.filter(h => h.keepBusy);
     hover();
     UI.drawTip();
+    touchFrame();
   } catch (e) { console.error(e); }
   placeStoryLink();
   // paper grain over everything
@@ -90,7 +91,7 @@ function placeStoryLink() {
 }
 
 // ---------- the pointer ----------
-function toLogical(e) { const r = SCREEN.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * W, (e.clientY - r.top) / r.height * H]; }
+function toLogical(e) { return toLogicalXY(e.clientX, e.clientY); }
 function hover() {
   const [x, y] = UI.mouse, h = UI.find(x, y);
   UI.hover = h;
@@ -102,7 +103,7 @@ function onDown(e) {
   const [x, y] = toLogical(e); UI.mouse = [x, y]; UI.touch = e.pointerType === 'touch';
   if (e.pointerType) TOUCH = e.pointerType !== 'mouse';
   if (e.button === 2) { goBack(); return; }
-  const h = UI.find(x, y); UI.down = { h, x, y, t: T };
+  const h = pickHit(x, y); UI.down = { h, x, y, t: T };
   if (h && h.drag && h.onDown) { h.onDown(x, y); UI.dragging = h; SCREEN.setPointerCapture && SCREEN.setPointerCapture(e.pointerId); }
 }
 function onMove(e) {
@@ -116,8 +117,10 @@ function onUp(e) {
   if (!d || e.button === 2) return;
   // the first tap on a phone asks for the whole screen, sideways (where the browser allows it)
   if (e.pointerType === 'touch' && !fullTried) { fullTried = true; goFull(); }
-  const h = UI.find(x, y);
-  if (h && sameHit(h, d.h) && h.onClick) h.onClick(x, y);
+  if (swipe(d, e)) return;
+  const h = pickHit(x, y);
+  if (h && sameHit(h, d.h) && h.onClick) { touchTap(e, x, y, h); h.onClick(x, y); }
+  else if (e.pointerType === 'touch') touchTap(e, x, y, null);
   // a finger leaves no pointer behind: no label hangs about after a tap (the map keeps it, to read the name)
   if (e.pointerType === 'touch' && G.view !== 'map') UI.mouse = [-500, -500];
 }
@@ -141,7 +144,7 @@ const HELD = new Set();   // arrow directions held down
 const walkDir = k => k === 'ArrowLeft' || k === 'a' || k === 'A' ? -1 : k === 'ArrowRight' || k === 'd' || k === 'D' ? 1 : 0;
 function onKey(e) {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
-  if (e.type === 'keydown' && e.key && e.key.length === 1) lastKeyAt = performance.now();
+  if (e.type === 'keydown' && e.key && (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Enter')) lastKeyAt = performance.now();
   G.lastInput = T;
   SND.resume();
   if (HELP.on) { if (['Escape', 'Enter', ' ', 'h', 'H', '?'].includes(e.key)) { HELP.on = false; e.preventDefault(); } return; }
@@ -163,7 +166,9 @@ function onKey(e) {
 async function boot() {
   SCREEN = document.getElementById('screen');
   setWho(params.get('who') || 'me');
-  const dpr = window.devicePixelRatio || 1, cssW = Math.min(window.innerWidth, window.innerHeight * 16 / 9);
+  // a phone is measured as it will be held, sideways, whichever way it is held now
+  const dpr = window.devicePixelRatio || 1, lw = TOUCH ? Math.max(innerWidth, innerHeight) : innerWidth, lh = TOUCH ? Math.min(innerWidth, innerHeight) : innerHeight;
+  const cssW = Math.min(lw, lh * 16 / 9);
   RS = clamp(Math.round(cssW * dpr / W * 4) / 4, .75, 1.5);
   if (cssW < 1000 && (TOUCH || dpr > 1.5)) RS = Math.min(RS, 1);   // a phone: sharp enough, and a third of the memory
   if (params.has('rs')) RS = Number(params.get('rs'));
@@ -183,12 +188,25 @@ async function boot() {
   for (const ev of ['touchend', 'click']) window.addEventListener(ev, () => SND.resume(), { passive: true });
   SCREEN.addEventListener('pointerdown', onDown); SCREEN.addEventListener('pointermove', onMove); SCREEN.addEventListener('pointerup', onUp); SCREEN.addEventListener('pointerleave', e => { if (!UI.dragging) UI.mouse = [-500, -500]; });
   SCREEN.addEventListener('contextmenu', e => e.preventDefault());
+  // a tap on the canvas must not take the focus from the typing field it has just given it (the phone's keyboard would close)
+  SCREEN.addEventListener('mousedown', e => e.preventDefault());
   window.addEventListener('keydown', onKey);
   // letting go of one arrow while the other is still down walks the other way
   window.addEventListener('keyup', e => { const dir = walkDir(e.key); if (!dir) return; HELD.delete(dir); if (G.clawd.hold === dir) holdWalk(HELD.has(-dir) && G.view === 'room' ? -dir : 0); });
   window.addEventListener('blur', () => { HELD.clear(); holdWalk(0); });
   const keys = document.getElementById('keys');
-  keys.addEventListener('input', () => { const v = keys.value; keys.value = ''; if (performance.now() - lastKeyAt < 80) return; for (const ch of v) onKey({ key: ch, preventDefault() {} }); });
+  // a phone's own keyboard sends no keys, only what it did to the text: a space is kept in the field so that its
+  // backspace has something to take; what is added is typed, what is taken is a backspace, a new line is Enter
+  const SENT = ' ';
+  keys.addEventListener('focus', () => { keys.value = SENT; });
+  keys.addEventListener('input', e => {
+    const v = keys.value; keys.value = SENT;
+    if (performance.now() - lastKeyAt < 80) return;
+    if (e.inputType === 'insertLineBreak' || e.inputType === 'insertParagraph') return onKey({ key: 'Enter', preventDefault() {} });
+    if (v.length < SENT.length) return onKey({ key: 'Backspace', preventDefault() {} });
+    for (const ch of v.slice(SENT.length)) onKey({ key: ch, preventDefault() {} });
+  });
+  keys.addEventListener('keydown', e => { if (e.key === 'Enter') { keys.blur(); } });
   document.getElementById('loading').classList.add('gone');
   requestAnimationFrame(frame);
   window.ready = true;
