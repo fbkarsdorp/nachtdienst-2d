@@ -23,7 +23,21 @@ const SND = {
       'shove-1', 'shove-2', 'shove-3', 'shove-4', 'out-1', 'out-2', 'flap-1', 'flap-2', 'fan-1', 'fan-2', 'flip-1', 'flip-2', 'flip-3'];
     for (const n of names) { const a = new Audio(`sounds/${n}.mp3`); a.preload = 'auto'; this.samples[n] = a; }
   },
-  resume() { this.init(); if (this.ctx && this.ctx.state !== 'running') this.ctx.resume(); if (!this.started && this.ctx) { this.started = true; this.ambience(); } },
+  // put away (the screen locked, another app, another tab): the room falls silent, and comes back when looked at
+  // again. 'playback' (asked for on iOS, to play through the silent switch) would otherwise go on in the pocket.
+  sleep() {
+    this.asleep = true;
+    if (this.ctx && this.ctx.state === 'running') this.ctx.suspend().catch(() => {});
+    for (const a of Object.values(this.samples)) try { a.pause(); } catch (e) { /* fine */ }
+    try { if (navigator.audioSession) navigator.audioSession.type = 'auto'; } catch (e) { /* older Safari */ }
+  },
+  wake() {
+    if (!this.asleep) return; this.asleep = false;
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* older Safari */ }
+    if (this.ctx && this.ctx.state !== 'running') this.ctx.resume().catch(() => {});   // if refused, the next tap resumes it
+  },
+  resume() {
+    if (document.hidden) return; this.init(); if (this.ctx && this.ctx.state !== 'running') this.ctx.resume(); if (!this.started && this.ctx) { this.started = true; this.ambience(); } },
   toggle() { this.on = !this.on; if (this.master) this.master.gain.setTargetAtTime(this.on ? .9 : 0, this.ctx.currentTime, .05); for (const a of Object.values(this.samples)) a.muted = !this.on; return this.on; },
   now() { return this.ctx ? this.ctx.currentTime : 0; },
   out(pan = 0, wet = .6) {
@@ -35,7 +49,7 @@ const SND = {
   // x in the room (0..1920) to a stereo position
   panX(x) { return clamp((x - 960) / 1100, -.85, .85); },
   sample(base, n, vol = .7, rate = 1) {
-    if (!this.on) return;
+    if (!this.on || this.asleep) return;
     const a = this.samples[`${base}-${1 + Math.floor(Math.random() * n)}`]; if (!a) return;
     try { const b = a.cloneNode(); b.volume = clamp(vol); b.playbackRate = rate; b.play().catch(() => {}); } catch (e) { /* no sound is fine */ }
   },

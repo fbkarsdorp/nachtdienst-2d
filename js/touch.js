@@ -94,10 +94,11 @@ async function keepAwake() {
   try { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } catch (e) { /* not allowed here */ }
 }
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { if (G.S && !G.preview) G.save(); HELD.clear(); }
-  else keepAwake();
+  if (document.hidden) { if (G.S && !G.preview) G.save(); HELD.clear(); SND.sleep(); }
+  else { SND.wake(); keepAwake(); }
 });
-window.addEventListener('pagehide', () => { if (G.S && !G.preview) G.save(); });
+window.addEventListener('pagehide', () => { if (G.S && !G.preview) G.save(); SND.sleep(); });
+window.addEventListener('pageshow', e => { if (e.persisted && !document.hidden) SND.wake(); });
 
 // ---------- sideways: a phone held upright with its rotation locked still plays, the room turned on the glass ----------
 // Upright, the stage is drawn turned a quarter, filling the screen; turning the phone then reads it. Unlocked phones
