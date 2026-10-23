@@ -5,8 +5,16 @@
 
 let _nightCb = null;
 function NIGHT_LOADED(b) { if (_nightCb) { _nightCb(b); _nightCb = null; } }
-function loadScript(src) {
-  return new Promise((ok, bad) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => bad(new Error('kan ' + src + ' niet laden')); document.head.appendChild(s); });
+// a data file as a script; on a poor connection it is tried again, and it gives up rather than waiting for ever
+function loadScript(src, tries = 2) {
+  return new Promise((ok, bad) => {
+    const s = document.createElement('script'); let done = false;
+    const fail = why => { if (done) return; done = true; s.remove(); if (tries > 1) loadScript(src + (src.includes('?') ? '' : '?r=' + Date.now()), tries - 1).then(ok, bad); else bad(new Error(`${src} ${why}`)); };
+    const timer = setTimeout(() => fail('laadt niet (na 20 s)'), 20000);
+    s.onload = () => { if (done) return; done = true; clearTimeout(timer); ok(); };
+    s.onerror = () => { clearTimeout(timer); fail('kon niet geladen worden'); };
+    s.src = src; document.head.appendChild(s);
+  });
 }
 function seedFor(name) {
   const n = Number(name);

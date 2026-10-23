@@ -195,4 +195,23 @@ async function boot() {
   // for testing: ?seed=1001&go jumps straight into a night
   if (params.has('go')) { G.preview = false; const s = seedFor(params.get('seed') || defaultSeed()); await G.start(s, params.get('name') || '', false); G.S.fired.introDone = true; setView('room'); }
 }
-window.addEventListener('load', boot);
+// Start as soon as the page's own scripts are in (not on 'load', which also waits for the web fonts' stylesheet:
+// on a slow connection that can take a long while, and the fonts are waited for in boot anyway). If anything goes
+// wrong before the room is up, the loading screen says what, rather than warming the lamp for ever.
+function bootFailed(e) {
+  if (window.ready) return;
+  console.error(e);
+  const l = document.getElementById('loading'); if (!l) return;
+  const msg = (e && (e.message || e.reason && e.reason.message || e.reason)) || String(e);
+  l.innerHTML = '';
+  const box = document.createElement('div'); box.style.cssText = 'max-width:80%;text-align:center;line-height:1.3';
+  box.append('De lamp gaat niet aan.');
+  const small = document.createElement('div'); small.style.cssText = 'font:16px/1.4 ui-monospace,monospace;opacity:.7;margin:.6em 0 1em;word-break:break-word'; small.textContent = msg;
+  const again = document.createElement('button'); again.textContent = 'Opnieuw proberen'; again.style.cssText = 'font:inherit;color:#f2c66b;background:none;border:0;text-decoration:underline;cursor:pointer';
+  again.onclick = () => location.reload();
+  box.append(small, again); l.append(box);
+}
+window.addEventListener('error', e => bootFailed(e.error || e.message));
+window.addEventListener('unhandledrejection', e => bootFailed(e.reason));
+const startBoot = () => boot().catch(bootFailed);
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', startBoot); else startBoot();
