@@ -148,9 +148,9 @@ function adminRender() {
     adminBtn('Kast I–IV invoegen', () => AD.run(() => AD.allFour(), 'room')),
     adminBtn('Kast V open', () => AD.run(() => { AD.allFour(); S.five = 'open'; }, 'dial'), 'Alles ingevoegd, het slot van kast V open; de kaart is te lezen'),
     // the endings start after the tidying, so their own hold on the input stays
-    adminBtn('Einde: kast V', () => { AD.run(() => { AD.allFour(); S.fiveWord = S.fiveWord || 'mijzelf'; S.five = 'typed'; }); adminToggle(false); endingFive(); }),
+    adminBtn('Einde: kast V', () => { AD.run(() => { AD.allFour(); S.fiveWord = S.fiveWord || S.name || 'de assistent'; S.five = 'typed'; }); adminToggle(false); endingFive(); }),
     adminBtn('Einde: dicht laten', () => { AD.run(() => AD.allFour()); adminToggle(false); endingShut(); }),
-    adminBtn('Slotscherm', () => { AD.run(() => { S.fiveWord = S.fiveWord || 'mijzelf'; S.endMinutes = G.minutes(); }); adminToggle(false); setView('final', 'five'); }))));
+    adminBtn('Slotscherm', () => { AD.run(() => { S.fiveWord = S.fiveWord || S.name || 'de assistent'; S.endMinutes = G.minutes(); }); adminToggle(false); setView('final', 'five'); }))));
 
   // where to stand, and what time it is
   el.append(adminEl('section', {}, adminEl('h3', { textContent: 'Ga naar' }), adminEl('div', { className: 'row' },

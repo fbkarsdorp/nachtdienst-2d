@@ -8,11 +8,12 @@ const SAVE_KEY = 'nachtdienst-2d';
 const LEAK_STEP = 180;          // seconds per step of a leak
 const HINT_COST = [2, 4, 8];    // minutes on the clock
 
-// the last card's blank: what more it takes, the invitation on it, and the nudges after a word that does not go in
-const FIVE_WORDS = ['ik', 'mezelf', 'jezelf', 'zichzelf', 'hemzelf', 'haarzelf', 'jou', 'jij', 'hem', 'haar', 'niemand', 'nieuwe assistent',
-  'spiegel', 'spiegelbeeld', 'zijn spiegelbeeld', 'haar spiegelbeeld', 'mijn spiegelbeeld', 'zichzelf in het glas', 'verzamelaar', 'j.j.v.', 'jjv'];
+// the last card: the top card in cabinet V bears a name, and the blank is it. The player's own name goes in at once
+// (any part of it), as do these; anything else after the nudges. Without a name given, what is typed becomes the name.
+const FIVE_ENDING = [', en wat de assistent daar zag, dat was ____.', '. Op de bovenste stond een naam: ____.'];
+const FIVE_WORDS = ['assistent', 'nieuwe assistent', 'vorige assistent', 'mij', 'mijzelf', 'ik', 'mijn naam', 'jij', 'jou'];
 const FIVE_INVITE = 'vul het zelf in. aan de machine';
-const FIVE_NUDGES = ['Wat zag de assistent daar?', 'Wie zat hier vannacht?', 'Wie leest dit nu?'];
+const FIVE_NUDGES = ['Wie zat hier vannacht?', 'Wiens kaart is dit?', 'Je eigen naam.'];
 const G = {
   B: null, S: null, F: null, view: 'title', arg: null, reader: null, busy: false, events: [],
   clawd: { x: 300, tx: 300, y: WALK_Y, face: 'front', walking: false, walkT0: 0, x0: 300, then: null, mood: new Mood('neutral'), look: null, turnT: 0, prevFace: 'front' },
@@ -42,6 +43,7 @@ const G = {
   async start(seed, name, resume) {
     this.B = await loadNight(seed);
     this.F = this.B.frame;
+    this.F.card_five = { ...this.F.card_five, description: this.F.card_five.description.replace(...FIVE_ENDING) };
     let S = null;
     if (resume) { try { S = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { S = null; } }
     this.S = S && S.seed === seed ? S : this.newState(seed, name);
@@ -498,14 +500,16 @@ const G = {
     this.clawd.mood.act('confused', 1.2);
     return { ok: false };
   },
-  // the blank is the player's to fill: the likely words go in at once, anything else after a few nudges
   typeFive(word) {
     const n = normalize(word), name = normalize(this.S.name || '');
-    const list = [...this.F.final_words, ...FIVE_WORDS, ...this.S.typed].map(normalize);
-    if (name) list.push(name);
     if (!n) return { ok: false };
+    const list = FIVE_WORDS.map(normalize);
+    if (name) list.push(name, ...name.split(' ').filter(p => p.length > 1));
     const miss = this.S.fiveMiss || 0;
-    if (list.includes(n) || miss >= FIVE_NUDGES.length) { this.S.fiveWord = word.trim(); this.S.five = 'typed'; this.save(); return { ok: true, five: true }; }
+    if (!name || list.includes(n) || miss >= FIVE_NUDGES.length) {
+      if (!name) this.S.name = word.trim();
+      this.S.fiveWord = word.trim(); this.S.five = 'typed'; this.save(); return { ok: true, five: true };
+    }
     this.S.fiveMiss = miss + 1; this.save();
     return { ok: false, nudge: FIVE_NUDGES[miss] };
   },
