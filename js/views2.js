@@ -698,7 +698,8 @@ function endingShut() {
 }
 // the player's own card, in the house format
 V.final = {
-  enter(mode) { this.mode = mode; this.back = false; this.t0 = T; this.flipT = -9; G.clearSave(); },
+  // the ending's walk-out held all input; the closing screen hands it back
+  enter(mode) { this.mode = mode; this.back = false; this.t0 = T; this.flipT = -9; G.busy = false; G.clearSave(); },
   card() {
     const S = G.S, d = new Date(), date = `${d.getDate()}-${d.getMonth() + 1}-1983`;
     const desc = G.F.card_five.description.replace('____', S.fiveWord || '…');
