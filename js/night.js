@@ -184,7 +184,7 @@ const N = {
     tw.base = tw.extra.length;
     setTimeout(() => { SND.ding(); G.finishR4(key); setTimeout(() => this.showDigit(), 900); }, delay + 200);
   },
-  // a room lock is open: the card it turned on comes up, with J.J.V.'s pencil
+  // a room lock is open: the card it turned on comes up, with J.D.'s pencil
   showDigit() {
     const k = G.S.pendingDigitCard; if (!k) return;
     G.S.pendingDigitCard = null;

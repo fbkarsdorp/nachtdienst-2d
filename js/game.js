@@ -14,14 +14,14 @@ const FIVE_ENDING = [', en wat de assistent daar zag, dat was ____.', '. Op de b
 const FIVE_WORDS = ['assistent', 'nieuwe assistent', 'vorige assistent', 'mij', 'mijzelf', 'ik', 'mijn naam', 'jij', 'jou'];
 const FIVE_INVITE = 'vul het zelf in. aan de machine';
 const FIVE_NUDGES = ['Wie zat hier vannacht?', 'Wiens kaart is dit?', 'Je eigen naam.'];
-// under it, the assistants before: the same story, each with its own name, yellower the further back. Told by J.J.V., every one.
+// under it, the assistants before: the same story, each with its own name, yellower the further back. Told by J.D., every one.
 const FIVE_BEFORE = [
   { name: 'W. de Graaf', date: '14-11-1971', tone: '#ECDDB8' },
   { name: 'A. Mulder', date: '2-3-1958', tone: '#E4D2A6' },
   { name: 'H. Brands', date: '27-9-1946', tone: '#DAC493' },
   { name: 'J. Pieters', date: '19-1-1932', tone: '#CFB582' },
 ];
-const FIVE_FILED = 'Opgeborgen. — J.J.V.', FIVE_FINAL = 'Opgeborgen. Bij de anderen. — J.J.V.';
+const FIVE_FILED = 'Opgeborgen. — J.D.', FIVE_FINAL = 'Opgeborgen. Bij de anderen. — J.D.';
 const G = {
   B: null, S: null, F: null, view: 'title', arg: null, reader: null, busy: false, events: [],
   clawd: { x: 300, tx: 300, y: WALK_Y, face: 'front', walking: false, walkT0: 0, x0: 300, then: null, mood: new Mood('neutral'), look: null, turnT: 0, prevFace: 'front' },
@@ -130,7 +130,7 @@ const G = {
     const hints = (d.hints || []).slice(0, this.S.hints[id] || 0);
     const fc = d.found_card && this.S.found[id];
     let found = null, foundOther = false;
-    // J.J.V. says where he left it; the bin he does not own up to, so the other hand does
+    // J.D. says where he left it; the bin he does not own up to, so the other hand does
     if (fc && this.where(`${id}/${fc.card}`).startsWith('found')) {
       foundOther = fc.loc === 'bin';
       found = foundOther ? 'hij heeft er één weggegooid' : this.F.found_notes[fc.loc];

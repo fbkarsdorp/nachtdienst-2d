@@ -6,7 +6,7 @@ Centraal Sagenarchief, painted in the manner of the
 boils twelve times a second. You are on night duty yourself, drawn after a portrait; an archive cat and Clawd, the
 Animation Base's character, are one URL parameter away.
 
-1983. J.J.V. has gone home and left a note on the reading table: *"Twaalf enveloppen invoegen. Kast vijf blijft
+1983. J.D. has gone home and left a note on the reading table: *"Twaalf enveloppen invoegen. Kast vijf blijft
 dicht. Sluit af vóór twaalven."* Four card cabinets, three drawers each: two card puzzles and one *room lock*, a
 thing in the room that is the lock (the clock, the window, the door, the typewriter). Solving a lock is knowing;
 inserting the cards is filing, and only filing counts. The cabinet you are working on leaks into the room until it
@@ -28,7 +28,7 @@ Use headphones: the room is mostly sound.
 - **At a cabinet**, take the envelope of the drawer whose turn it is. It goes to the reading table.
 - **On the table**, open the envelope. The cards stand in the tray: click one to read it (F turns it over, ← → go
   through them), **Op tafel** lays it down, **Meenemen** takes it in the hand. What is written on the envelope is
-  the task. **Vraag J.J.V.** adds a pencil hint and costs 2, 4, then 8 minutes on the clock.
+  the task. **Vraag J.D.** adds a pencil hint and costs 2, 4, then 8 minutes on the clock.
 - **The hand** holds one card or one envelope. Carry a card to a cabinet, the windowsill, the foot of the door or
   the typewriter.
 - **When a lock opens** the cards slide back into the envelope and its flap shuts. Carry it to its drawer: the cards

@@ -62,9 +62,9 @@ function violetStamp(x, y, num) {
 }
 function storyNumber(r) { const m = r && r.url && r.url.match(/(\d+)$/); return m ? m[1] : null; }
 
-// pencil in J.J.V.'s hand, or another's
+// pencil in J.D.'s hand, or another's
 function pencilNote(txt, x, y, w, size = 30, o = {}) {
-  const font = o.other ? FONT.jjv : FONT.hand, col = o.col || (o.other ? '#3B3346' : '#4A4250');
+  const font = o.other ? FONT.jd : FONT.hand, col = o.col || (o.other ? '#3B3346' : '#4A4250');
   const lines = wrapLines(txt, w, `${size}px ${font}`);
   C.save(); C.translate(x, y); C.rotate(o.rot ?? -.025); C.globalAlpha = o.alpha ?? .92; C.fillStyle = col; C.font = `${o.weight || 600} ${size}px ${font}`;
   lines.forEach((l, i) => C.fillText(l, 0, i * size * (o.other ? 1.5 : 1.08)));
@@ -174,11 +174,11 @@ function paintCardBack(card) {
     const box = fitText(back.replace(/\n+/g, '\n'), CW - 90, CHC - 130, 23, 13, FONT.type, 1.3);
     box.lines.forEach((ln, i) => typedText(ln, 46, 84 + i * box.lh + box.size * .7, box.size, '#2E2A35', { seed: 90 + i }));
   } else {
-    const ini = r.initials || (card.kind === 'five' || card.kind === 'desk' ? 'J.J.V.' : '');
+    const ini = r.initials || (card.kind === 'five' || card.kind === 'desk' ? 'J.D.' : '');
     if (ini) handText(ini, CW - 70, CHC - 60, 40, '#4A4250', { font: FONT.hand, align: 'right', weight: 600, j: 0, rot: -.04 });
   }
 }
-// J.J.V.'s note, the one on the spike
+// J.D.'s note, the one on the spike
 function paintNoteCard(card) {
   C.drawImage(paperSheet(CW, CHC, '#F4EEDC', 77, .4), 0, 0, CW, CHC);
   C.save(); C.globalAlpha = .4; C.strokeStyle = PAL.rule; C.lineWidth = 1.2;
@@ -216,7 +216,7 @@ function drawCard(card, x, y, w, o = {}) {
 // ---------- the index tab of a card standing in the tray ----------
 function tabLabel(card) {
   const r = card.r;
-  if (card.kind === 'note') return { place: 'J.J.V.', year: '', code: '' };
+  if (card.kind === 'note') return { place: 'J.D.', year: '', code: '' };
   if (r.half === 'bottom') return { place: 'onderste helft', year: '', code: r.code || '' };
   if (r.summary) return { place: 'samenvatting', year: '', code: '' };
   const place = card.fill && card.fill.place ? card.fill.place : r.place || '— —';
@@ -247,7 +247,7 @@ function paintEnvelope(env) {
   C.fillText(env.have < env.count ? `${env.have}/${env.count}` : String(env.count), 0, 16);
   if (env.sealed) { C.strokeStyle = PAL.red; C.lineWidth = 6; C.beginPath(); C.moveTo(-30, 2); C.lineTo(-8, 26); C.lineTo(38, -36); C.stroke(); }
   C.restore();
-  // J.J.V.'s note, then whatever he added
+  // J.D.'s note, then whatever he added
   let y = env.open ? 220 : 340;
   const lines = [];
   if (env.note) lines.push({ txt: env.note });

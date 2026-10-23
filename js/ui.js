@@ -34,7 +34,7 @@ const UI = {
     for (let i = this.notes.length - 1; i >= 0; i--) {
       const n = this.notes[i], age = (T - n.t) * 1000; if (age > n.ms) { this.notes.splice(i, 1); continue; }
       const k = backOut(clamp(age / 260)), out = clamp((n.ms - age) / 300), size = n.big ? 46 : 38;
-      const font = n.other ? FONT.jjv : FONT.hand, lines = wrapLines(n.txt, 900, `600 ${size}px ${font}`);
+      const font = n.other ? FONT.jd : FONT.hand, lines = wrapLines(n.txt, 900, `600 ${size}px ${font}`);
       const lh = size * (n.other ? 1.55 : 1.12), h = lines.length * lh + 34;
       C.font = `600 ${size}px ${font}`; const w = Math.min(980, Math.max(...lines.map(l => C.measureText(l).width)) + 70);
       const x = n.x ?? W / 2, yy = (n.y ?? y) - h;
@@ -170,7 +170,7 @@ function brushWipe(p, cols = ['#2A2030', '#3A2C3E']) {
   pop();
 }
 
-// ---------- how it works: a card of J.J.V.'s instructions, in pencil ----------
+// ---------- how it works: a card of J.D.'s instructions, in pencil ----------
 // with a finger it is tapping, not clicking, and there are no keys to press
 const helpLines = () => {
   const who = typeof WHO_ALL !== 'undefined' ? WHO_ALL[WHO].word : 'de assistent';
@@ -178,7 +178,7 @@ const helpLines = () => {
     `${TOUCH ? 'Tik' : 'Klik'} op iets in de kamer: ${who} loopt erheen.`,
     'Bij een kast: pak de envelop van de la die aan de beurt is. Hij gaat mee naar de leestafel.',
     `Op tafel: maak de envelop open, lees de kaarten (${TOUCH ? '“Omdraaien”' : 'F'} draait ze om), leg ze neer.`,
-    'Wat op de envelop staat, is de opdracht. “Vraag J.J.V.” kost tijd op de klok.',
+    'Wat op de envelop staat, is de opdracht. “Vraag J.D.” kost tijd op de klok.',
     'Een kaart kan mee in de hand, naar een kast, het raam, de deur, de machine.',
     'Gaat het slot open, dan gaat de envelop dicht: neem hem mee en voeg hem in zijn la in.',
     TOUCH ? 'De hand houdt één ding. “Terug”, linksboven: terug.' : 'De hand houdt één ding. Esc of de rechterknop: terug.',
@@ -200,7 +200,7 @@ function drawHelp() {
   handText('— zo gaat het —', -w / 2 + 380, -h / 2 + 96, 34, '#6A6070', { font: FONT.hand, j: 0 });
   let y = -h / 2 + 140;
   for (const l of helpLines()) y += pencilNote(l, -w / 2 + 60, y + 4, w - 120, 34, { rot: 0, col: '#3A3248' }) + 22;
-  handText('J.J.V.', w / 2 - 80, h / 2 - 36, 40, '#3A3248', { font: FONT.hand, weight: 600, align: 'right', j: 0 });
+  handText('J.D.', w / 2 - 80, h / 2 - 36, 40, '#3A3248', { font: FONT.hand, weight: 600, align: 'right', j: 0 });
   pop();
 }
 function helpToggle(on = !HELP.on) { HELP.on = on; HELP.t0 = T; SND.pencil(); }

@@ -1,5 +1,5 @@
 // room.js: the reading room of the Centraal Sagenarchief, seen as one painted cut-away: the back wall with its five
-// card cabinets, the wall clock, the window over the canal, the door, J.J.V.'s coat, and the reading table in front.
+// card cabinets, the wall clock, the window over the canal, the door, J.D.'s coat, and the reading table in front.
 // Static parts are painted into boiled layers; whatever moves or changes is painted live on top.
 'use strict';
 
@@ -378,7 +378,7 @@ function paintDoorLeaf(open = 0, shiver = 0, letters = true) {
   if (open > .02) paint(rectPts(x + w, D.y, 12 * open + 4, D.h, .4), { wash: '#4A3020', ink: PAL.ink, sw: .5 });
 }
 
-// ---------- the coat stand and J.J.V.'s coat ----------
+// ---------- the coat stand and J.D.'s coat ----------
 function paintCoat(pocketCard) {
   const K = ROOM.coat, cx = K.x + K.w / 2;
   boilSeed('coat');

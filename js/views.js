@@ -188,7 +188,7 @@ V.room = {
     UI.hit({ r: [ROOM.clock.x, ROOM.clock.y, ROOM.clock.w, ROOM.clock.h], tip: 'De klok', onClick: go('clock', () => openView('clock', null, [ROOM.clock.cx, ROOM.clock.cy])) });
     UI.hit({ r: [ROOM.window.x, ROOM.window.y, ROOM.window.w, ROOM.window.h + 30], tip: 'Het raam', onClick: go('window', () => openView('window', null, [1330, 400])) });
     UI.hit({ r: [ROOM.door.x, ROOM.door.y, ROOM.door.w, ROOM.door.h], tip: 'De deur', onClick: go('door', () => openView('door', null, [160, 600])) });
-    UI.hit({ r: [ROOM.coat.x, ROOM.coat.y, ROOM.coat.w, ROOM.coat.h - 60], tip: 'De jas van J.J.V.', onClick: go('coat', () => clickCoat()) });
+    UI.hit({ r: [ROOM.coat.x, ROOM.coat.y, ROOM.coat.w, ROOM.coat.h - 60], tip: 'De jas van J.D.', onClick: go('coat', () => clickCoat()) });
     UI.hit({ r: [ROOM.chair.x, ROOM.chair.y, ROOM.chair.w, ROOM.chair.h], tip: 'De leunstoel', onClick: go('chair', () => clickFound('chair', 'Een leunstoel. Er ligt niets op.')) });
     UI.hit({ r: [ROOM.map.x - 6, ROOM.map.y - 6, ROOM.map.w + 12, ROOM.map.h + 12], tip: 'De kaart van Nederland', onClick: go('map', () => openView('map', null, [1830, 330])) });
     // in front of the cabinets: the table and what stands on it
@@ -537,7 +537,7 @@ function drawSpikeTop() {
     pop();
   }
   paint(ellPts(x, y, 6, 6, 10), { wash: '#C9CAD6', tex: 0, ink: PAL.ink, sw: .5 });
-  UI.hit({ c: [x, y, 120], tip: n ? `${n} van de twaalf` : 'Het briefje van J.J.V.', onClick: () => G.read(['note'], 0, 'note') });
+  UI.hit({ c: [x, y, 120], tip: n ? `${n} van de twaalf` : 'Het briefje van J.D.', onClick: () => G.read(['note'], 0, 'note') });
 }
 function drawTypewriterCorner() {
   boilSeed('twcorner');
@@ -558,7 +558,7 @@ function drawEnvelopeBay(id) {
   else UI.hit({ r: [bx, by, bw, bh], tip: null, cursor: 'default', onClick: () => {} });
   if (!sealed && G.S.drawers[id] === 'open') {
     const used = S.hints[id] || 0, d = G.drawer(id);
-    if (used < (d.hints || []).length) UI.button(`Vraag J.J.V. (+${HINT_COST[used]} min)`, bx + 200, by - 34, { size: 26, onClick: () => G.askHint() });
+    if (used < (d.hints || []).length) UI.button(`Vraag J.D. (+${HINT_COST[used]} min)`, bx + 200, by - 34, { size: 26, onClick: () => G.askHint() });
   }
 }
 function drawTray() {
@@ -832,7 +832,7 @@ function archiveDrawer(n, idx) {
     boilSeed('archdrawer');
     paint(rectPts(bx, by, bw, bh, 2), { wash: PAL.oakLt, ink: PAL.ink, sw: 1.2 });
     paint(rectPts(bx + 24, by + 24, bw - 48, bh - 48, 1), { wash: '#4A3424', ink: PAL.ink, sw: .8 });
-    // the brown divider with J.J.V.'s note on the first
+    // the brown divider with J.D.'s note on the first
     paint(rectPts(bx + 40, by + 40, bw - 80, 110, 1), { wash: '#8A5E38', ink: PAL.ink, sw: .8 });
     if (!G.S.fired.archiveNote || G.S.fired.archiveNote === `${n}-${idx}`) { G.S.fired.archiveNote = `${n}-${idx}`; pencilNote(G.F.archive_note, bx + 70, by + 104, 900, 34, { col: '#F2E6CC' }); }
     else handText(`${CAB_LABEL[n]}`, bx + 70, by + 106, 34, '#F2E6CC', { font: FONT.fellSC, j: 0 });
@@ -873,7 +873,7 @@ function clickFound(loc, emptyNote) {
 }
 function clickCoat() {
   if (G.foundAt('coat')) return G.pickUp('coat');
-  G.say(G.S.ended ? 'De jas hangt er nog.' : 'De jas van J.J.V. Hij is zonder jas naar huis.');
+  G.say(G.S.ended ? 'De jas hangt er nog.' : 'De jas van J.D. Hij is zonder jas naar huis.');
 }
 function clickTypewriter() {
   if (G.foundAt('typewriter')) { G.pickUp('typewriter'); return; }

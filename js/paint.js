@@ -197,7 +197,7 @@ function dryStroke(P, sw, col, alpha = .5) {
   }
   C.globalAlpha = 1;
 }
-// pencil: a thin grainy line (J.J.V.'s notes, hatching, the map's working lines)
+// pencil: a thin grainy line (J.D.'s notes, hatching, the map's working lines)
 function pencilLine(P, w = 1.2, col = '#3a3540', alpha = .75) {
   const Q = resample(P, 2.5, false), n = Q.length; if (n < 2) return;
   C.strokeStyle = col; C.lineCap = 'round'; C.lineJoin = 'round';
@@ -328,7 +328,7 @@ function softBlob(x, y, rx, ry, col, a) {
 const FONT = {
   type: '"Special Elite", "Special Elite L", "Courier New", monospace',
   hand: '"Caveat", "Caveat L", "Segoe Print", cursive',
-  jjv: '"Homemade Apple", "Homemade Apple L", "Caveat", cursive',
+  jd: '"Homemade Apple", "Homemade Apple L", "Caveat", cursive',
   fell: '"IM Fell English", "IM Fell English L", Georgia, serif',
   fellSC: '"IM Fell English SC", "IM Fell English SC L", Georgia, serif',
 };
