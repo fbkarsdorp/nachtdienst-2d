@@ -45,6 +45,7 @@ function frame(now) {
     UI.drawNotes();
     drawCaptions();
     drawHelp();
+    drawColofon();
     drawTransition();
     if (TR.kind && !TR.done) UI.hits = [{ r: [0, 0, W, H], cursor: 'wait', onClick: () => {} }];
     if (G.busy && G.view !== 'title') UI.hits = UI.hits.filter(h => h.keepBusy);
@@ -132,6 +133,7 @@ function sameHit(a, b) {
 }
 function goBack() {
   if (HELP.on) { HELP.on = false; return; }
+  if (COLOFON.on) { COLOFON.on = false; return; }
   if (TR.kind && !TR.done) return;
   if (G.reader) { G.closeReader(); return; }
   if (V.halves.on) { V.halves.on = false; return; }
@@ -148,6 +150,7 @@ function onKey(e) {
   G.lastInput = T;
   SND.resume();
   if (HELP.on) { if (['Escape', 'Enter', ' ', 'h', 'H', '?'].includes(e.key)) { HELP.on = false; e.preventDefault(); } return; }
+  if (COLOFON.on) { if (['Escape', 'Enter', ' '].includes(e.key)) { COLOFON.on = false; e.preventDefault(); } return; }
   if (Reader.key(e)) { e.preventDefault(); return; }
   const v = V[G.view];
   if (V.halves.on && e.key === 'Escape') { V.halves.on = false; e.preventDefault(); return; }

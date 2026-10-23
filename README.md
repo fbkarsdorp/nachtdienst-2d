@@ -141,6 +141,11 @@ typed or dialled and compares.
 at the GitHub Pages address. `social/github-preview.png` (1280×640) is for the repository's own social preview, set
 by hand under Settings → General → Social preview.
 
+## Credits
+
+Made by Folgert Karsdorp together with Claude (Anthropic). The person on duty is drawn after a portrait of Folgert
+by Lauren Fonteyn. The game's own colophon is behind "Colofon" on the title screen and at the end of the night.
+
 ## Sources
 
 - Stories: Nederlandse Volksverhalenbank, Meertens Instituut (KNAW), www.verhalenbank.nl. Each card's violet stamp
@@ -148,5 +153,5 @@ by hand under Settings → General → Social preview.
 - Puzzle bundles, map geometry (Natural Earth), gazetteer (GeoNames, CC BY 4.0) and the archive export: the original
   Nachtdienst pipeline.
 - Card and envelope sounds: Kenney (kenney.nl), CC0.
-- Clawd and the animation principles: Claude Animation Base. The cat, and the player after a portrait: drawn for this version.
+- Clawd and the animation principles: Claude Animation Base. The cat, and the player after Lauren Fonteyn's portrait: drawn for this version.
 - Fonts: Special Elite, Caveat, Homemade Apple, IM Fell English (Google Fonts, OFL).

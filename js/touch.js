@@ -78,7 +78,7 @@ for (const [k, pat] of Object.entries(VIBE)) {
 // ---------- the back button (and the back swipe) step back in the room rather than leaving the archive ----------
 // One extra history entry stands in for the game; going back from it does what Esc does, and puts it back. In the
 // room with nothing open, a back press leaves for real.
-const canStepBack = () => !!(HELP.on || G.reader || V.halves.on || V.drawerOpen || (G.S && ['table', 'cabinet', 'map', 'typewriter', 'clock', 'window', 'door', 'dial'].includes(G.view)));
+const canStepBack = () => !!(HELP.on || COLOFON.on || G.reader || V.halves.on || V.drawerOpen || (G.S && ['table', 'cabinet', 'map', 'typewriter', 'clock', 'window', 'door', 'dial'].includes(G.view)));
 let historyArmed = false;
 function armHistory() { if (historyArmed || !canStepBack()) return; try { history.pushState({ nachtdienst: 1 }, ''); historyArmed = true; } catch (e) { /* sandboxed */ } }
 window.addEventListener('popstate', () => {

@@ -205,6 +205,41 @@ function drawHelp() {
 }
 function helpToggle(on = !HELP.on) { HELP.on = on; HELP.t0 = T; SND.pencil(); }
 
+// ---------- the colophon: who made it, typed on a filing card ----------
+const COLOFON = { on: false, t0: 0 };
+const COLOFON_LINES = [
+  ['Spel', 'Folgert Karsdorp, gemaakt samen met Claude (Anthropic)'],
+  ['Portret', 'de nachtassistent naar een tekening van Lauren Fonteyn'],
+  ['Verhalen', 'Nederlandse Volksverhalenbank, Meertens Instituut (KNAW)'],
+  ['Naar', 'het oorspronkelijke Nachtdienst, en de Claude Animation Base'],
+  ['Geluid', 'kaarten en enveloppen: Kenney (CC0); de rest gesynthetiseerd'],
+  ['Kaart', 'Natural Earth; plaatsnamen: GeoNames (CC BY 4.0)'],
+  ['Letters', 'Special Elite, Caveat, Homemade Apple, IM Fell English (OFL)'],
+];
+function drawColofon() {
+  if (!COLOFON.on) return;
+  const k = backOut(clamp((T - COLOFON.t0) / .35));
+  C.save(); C.fillStyle = `rgba(14,10,18,${.72 * clamp((T - COLOFON.t0) / .2)})`; C.fillRect(0, 0, W, H); C.restore();
+  UI.hit({ r: [0, 0, W, H], cursor: 'pointer', tip: null, onClick: () => { COLOFON.on = false; }, keepBusy: true });
+  push(); translate(W / 2, H / 2 + (1 - k) * 60); rotate(.008);
+  const w = 1240, h = 720;
+  C.drawImage(paperSheet(w, h, PAL.card, 57, .45), -w / 2, -h / 2, w, h);
+  C.save(); C.globalAlpha = .5; C.strokeStyle = PAL.red; C.lineWidth = 2; C.beginPath(); C.moveTo(-w / 2 + 30, -h / 2 + 128); C.lineTo(w / 2 - 30, -h / 2 + 128); C.stroke();
+  C.strokeStyle = PAL.rule; C.lineWidth = 1.2; C.globalAlpha = .4;
+  for (let y = -h / 2 + 196; y < h / 2 - 30; y += 70) { C.beginPath(); C.moveTo(-w / 2 + 30, y); C.lineTo(w / 2 - 30, y); C.stroke(); }
+  C.restore();
+  typedText('NACHTDIENST', -w / 2 + 60, -h / 2 + 96, 46, '#2A2630', { seed: 3 });
+  handText('Colofon', w / 2 - 60, -h / 2 + 96, 44, PAL.red, { font: FONT.hand, weight: 600, align: 'right', j: .3 });
+  COLOFON_LINES.forEach(([lab, txt], i) => {
+    const y = -h / 2 + 184 + i * 70;
+    handText(lab, -w / 2 + 60, y, 30, '#6A6070', { font: FONT.hand, weight: 600, j: 0 });
+    const room = w - 250 - 60, size = Math.min(27, 27 * room / typedWidth(txt, 27));   // a long line is typed smaller
+    typedText(txt, -w / 2 + 250, y, size, '#2A2630', { seed: 10 + i });
+  });
+  pop();
+}
+function colofonToggle(on = !COLOFON.on) { COLOFON.on = on; COLOFON.t0 = T; SND.card(); }
+
 // ---------- captions: what is heard, for whoever cannot hear it ----------
 const CAPS = [];
 function caption(txt, secs = 2.6) { if (CAPS.some(c => c.txt === txt && T - c.t < 1)) return; CAPS.push({ txt, t: T, secs }); if (CAPS.length > 3) CAPS.shift(); }

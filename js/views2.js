@@ -628,6 +628,7 @@ V.title = {
     y += 90;
     UI.button(SND.on ? 'Geluid: aan' : 'Geluid: uit', W / 2, y, { size: 26, id: 'snd', onClick: () => SND.toggle() });
     handText('Met koptelefoon. Verhalen: Nederlandse Volksverhalenbank, Meertens Instituut (KNAW).', W / 2, H - 40, 26, 'rgba(230,220,200,.55)', { font: FONT.hand, align: 'center', j: 0 });
+    UI.button('Colofon', W - 150, H - 60, { size: 26, id: 'colofon', onClick: () => colofonToggle(true) });
   },
   key(e) {
     if (!this.editing) { if (e.key === 'Enter') { beginNight(this.seed, this.name, false); return true; } return false; }
@@ -720,6 +721,9 @@ V.final = {
       UI.button('Bewaar als plaatje', 960, 860, { size: 32, onClick: () => saveOwnCard(this.card()) });
     }
     UI.button('Een nieuwe nacht', this.mode === 'shut' ? W / 2 : 1290, this.mode === 'shut' ? 980 : 860, { size: 32, onClick: () => { location.reload(); } });
+    // who made it, at the end of the night
+    handText('Folgert Karsdorp, met Claude · portret: Lauren Fonteyn · verhalen: Meertens Instituut', W / 2, H - 22, 22, 'rgba(60,52,70,.6)', { font: FONT.hand, align: 'center', j: 0 });
+    UI.button('Colofon', W - 130, H - 50, { size: 24, id: 'colofon', onClick: () => colofonToggle(true) });
   },
 };
 function drawOwnBack(x, y, w) {
