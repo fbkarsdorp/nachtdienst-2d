@@ -652,7 +652,8 @@ const Reader = {
     if (R.list.length > 1) handText(`${R.i + 1} / ${R.list.length}` + (TOUCH ? '  · veeg ⇆' : ''), PHONE ? x + w + 70 : W / 2, PHONE ? y + h / 2 + 90 : y - 24, 26, 'rgba(240,230,210,.7)', { font: FONT.hand, align: 'center', j: 0 });
     if (back && !(card.r && card.r.original) && card.kind !== 'note') handText('(achterkant)', x + 40, y + 50, 24, '#8A7F92', { font: FONT.hand, j: 0 });
   },
-  step(d) { const R = G.reader; R.i = (R.i + d + R.list.length) % R.list.length; R.back = false; R.flipT = -9; R.t0 = T - .25; G.markRead(R.list[R.i]); SND.card(); },
+  // turning to the next card puts this one down: a room lock wakes while you page through, not only once the reader shuts
+  step(d) { const R = G.reader; G.afterPutDown(R.list[R.i]); R.i = (R.i + d + R.list.length) % R.list.length; R.back = false; R.flipT = -9; R.t0 = T - .25; G.markRead(R.list[R.i]); SND.card(); },
   flip() { const R = G.reader; R.back = !R.back; R.flipT = T; SND.flip(); },
   after() { const R = G.reader; const key = R.list[R.i]; R.list = R.list.filter(k => k !== key); if (!R.list.length || R.from === 'table') { G.reader = null; G.clawd.mood.setRest(G.restMood()); G.afterPutDown(key); return; } R.i = Math.min(R.i, R.list.length - 1); R.t0 = T - .2; G.afterPutDown(key); },
   key(e) {

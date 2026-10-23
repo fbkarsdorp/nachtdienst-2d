@@ -61,11 +61,13 @@ const N = {
     this.wasFlick = flickering;
     // ---------- knocking at the door (R3) ----------
     const r3 = G.cab(3).drawers[2], r3awake = S.woke[r3.id] && !['solved', 'filed'].includes(S.drawers[r3.id]);
-    if (r3awake && T > (this.nextKnock || 0)) {
+    // woke() sets the first knock; this only covers a lock already awake when the night is resumed (one series, never two at once)
+    if (r3awake && !this.nextKnock) this.nextKnock = T + 2;
+    if (r3awake && T > this.nextKnock) {
       const k = r3.lock.n;
       for (let i = 0; i < k; i++) setTimeout(() => { SND.knock(0, 160); fx.shiver = 1; G.clawd.mood.act('scared', .6); }, i * 520);
       caption('(er wordt op de deur geklopt)', 2 + k * .52);
-      this.nextKnock = T + 30;
+      this.nextKnock = T + 20;
     }
     if (!r3awake) this.nextKnock = 0;
     fx.shiver = Math.max(0, (fx.shiver || 0) - dt * 3);
