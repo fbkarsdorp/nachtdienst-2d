@@ -131,7 +131,7 @@ function person(x, y, u, o = {}) {
   const sh = [pelvis[0] + Math.sin(lean) * 54, pelvis[1] + Math.cos(lean) * 54 - m.slump * 2.5 + m.shrug * 2.5 + breath, -shift * .3];
   const nod = m.nod * Math.max(0, Math.sin(T * 1.1)) ** 3;
   const hd = m.headDown + nod * .6;
-  const head = [sh[0] + 1.5 + hd * 3.5, sh[1] + 17 - Math.max(0, hd) * 3 - m.shrug * 1.5 + Math.max(0, -hd) * .5, sh[2] * .5];
+  const head = [sh[0] + 1.5 + hd * 3.5, sh[1] + 19.5 - Math.max(0, hd) * 3 - m.shrug * 1.5 + Math.max(0, -hd) * .5, sh[2] * .5];
   const hem = pelvis[1] - 1;
   // legs: the feet are planted, or walking heel to toe; the knees find themselves
   const legs = [1, -1].map(sg => {
@@ -339,7 +339,7 @@ function person(x, y, u, o = {}) {
     const arm = rib([lerp3(S, E, .8), E, Hd], 8.4, 6.4);
     paint(arm, { wash: skin, tex: 0, pool: 0, ink: null });
     openInk(arm, .05, sw * .85, edge(skin));
-    if (sc > 1) meTattoos(A);
+    if (sc > 1) { C.save(); tracePath(arm); C.clip(); meTattoos(A); C.restore(); }   // ink stays on the skin
     if (!A.hidden) meHand(A);
     // the sleeve: joined to the shirt (only its hem to draw) or over the body
     rs('sleeve' + A.sg);
@@ -378,8 +378,8 @@ function person(x, y, u, o = {}) {
     const seg2 = (a, b, t) => { const p = proj(lerp3(a, b, t)), q = proj(lerp3(a, b, Math.min(1, t + .05))); return [p, Math.atan2(q[1] - p[1], q[0] - p[0])]; };
     // the right arm as in the drawing (a tiger, a woman with flowers in her hair, a snake, a skull among plants), the
     // left (a monkey with a question mark, a dancer)
-    const set = A.sg < 0 ? [['tiger', A.E, A.Hd, .02, 0, .8], ['lady', A.E, A.Hd, .2, .6, .95], ['snake', A.E, A.Hd, .33, -1.6, .75], ['skull', A.E, A.Hd, .5, .2, .9], ['lotus', A.E, A.Hd, .68, -.6, .65], ['star', A.E, A.Hd, .62, 2, .4]]
-                         : [['monkey', A.E, A.Hd, .04, 0, .85], ['dancer', A.E, A.Hd, .36, .2, 1.15], ['rose', A.E, A.Hd, .14, -2, .6], ['swallow', A.E, A.Hd, .64, 1.4, .6], ['star', A.E, A.Hd, .55, -2, .4]];
+    const set = A.sg < 0 ? [['tiger', A.E, A.Hd, .04, 0, .7], ['lady', A.E, A.Hd, .2, .3, .8], ['snake', A.E, A.Hd, .34, -.8, .65], ['skull', A.E, A.Hd, .5, .1, .7], ['lotus', A.E, A.Hd, .67, -.3, .55], ['star', A.E, A.Hd, .6, .9, .35]]
+                         : [['monkey', A.E, A.Hd, .05, 0, .75], ['dancer', A.E, A.Hd, .36, .1, 1], ['rose', A.E, A.Hd, .16, -.9, .5], ['swallow', A.E, A.Hd, .63, .7, .5], ['star', A.E, A.Hd, .54, -.9, .35]];
     for (const [kind, a, b, t, off, k] of set) {
       const [p, ang] = seg2(a, b, t);
       push(); translate(p[0], p[1]); rotate(ang - Math.PI / 2); translate(off, 0); scale(2.5 * k);
