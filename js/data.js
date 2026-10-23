@@ -6,10 +6,13 @@
 let _nightCb = null;
 function NIGHT_LOADED(b) { if (_nightCb) { _nightCb(b); _nightCb = null; } }
 // a data file as a script; on a poor connection it is tried again, and it gives up rather than waiting for ever
+// the version stamped into index.html (stamp.sh): data fetched later is asked for by it too, past any cache
+const VERSION = (document.querySelector('meta[name="nachtdienst-version"]') || {}).content || '';
+const versioned = src => VERSION ? `${src}?v=${VERSION}` : src;
 function loadScript(src, tries = 2) {
   return new Promise((ok, bad) => {
     const s = document.createElement('script'); let done = false;
-    const fail = why => { if (done) return; done = true; s.remove(); if (tries > 1) loadScript(src + (src.includes('?') ? '' : '?r=' + Date.now()), tries - 1).then(ok, bad); else bad(new Error(`${src} ${why}`)); };
+    const fail = why => { if (done) return; done = true; s.remove(); if (tries > 1) loadScript(src + (src.includes('?') ? '&' : '?') + 'r=' + Date.now(), tries - 1).then(ok, bad); else bad(new Error(`${src} ${why}`)); };
     const timer = setTimeout(() => fail('laadt niet (na 20 s)'), 20000);
     s.onload = () => { if (done) return; done = true; clearTimeout(timer); ok(); };
     s.onerror = () => { clearTimeout(timer); fail('kon niet geladen worden'); };
@@ -23,7 +26,7 @@ function seedFor(name) {
   return NIGHT_SEEDS[h % NIGHT_SEEDS.length];
 }
 function loadNight(seed) {
-  return new Promise((ok, bad) => { _nightCb = ok; loadScript(`data/nights/${seed}.js`).catch(bad); });
+  return new Promise((ok, bad) => { _nightCb = ok; loadScript(versioned(`data/nights/${seed}.js`)).catch(bad); });
 }
 const ARCHIVE = {};
 const _archWait = {};
@@ -32,7 +35,7 @@ function loadArchive(n) {
   if (ARCHIVE[n]) return Promise.resolve(ARCHIVE[n]);
   return new Promise((ok, bad) => {
     const first = !_archWait[n]; (_archWait[n] = _archWait[n] || []).push(ok);
-    if (first) loadScript(`data/archive/cabinet-${n}.js`).catch(bad);
+    if (first) loadScript(versioned(`data/archive/cabinet-${n}.js`)).catch(bad);
   });
 }
 

@@ -236,6 +236,8 @@ function drawColofon() {
     const room = w - 250 - 60, size = Math.min(27, 27 * room / typedWidth(txt, 27));   // a long line is typed smaller
     typedText(txt, -w / 2 + 250, y, size, '#2A2630', { seed: 10 + i });
   });
+  // which version this is, in pencil in the corner (worth knowing when a fix has not arrived yet)
+  if (VERSION) handText('versie ' + VERSION, w / 2 - 40, h / 2 - 22, 22, '#8A7F92', { font: FONT.hand, align: 'right', j: 0 });
   pop();
 }
 function colofonToggle(on = !COLOFON.on) { COLOFON.on = on; COLOFON.t0 = T; SND.card(); }

@@ -18,7 +18,9 @@ made from the Nederlandse Volksverhalenbank, and the archive behind the dividers
 ## Playing
 
 Open `index.html` in a browser. It is a static page with no build step, and it also runs from a double-clicked file.
-`./serve.sh` serves it on <http://localhost:8137/> if you prefer.
+`./serve.sh` serves it on <http://localhost:8137/> if you prefer. Before publishing a change, run `./stamp.sh`:
+it stamps a new version into `index.html`, so browsers fetch the new files at once instead of keeping the old ones
+(the version is pencilled on the colophon card).
 
 Use headphones: the room is mostly sound.
 
