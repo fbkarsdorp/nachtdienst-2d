@@ -506,19 +506,30 @@ function paintBasket(card) {
   for (let j = 1; j < 6; j++) inkLine([[B.x + 2 + j * 1.6, B.y + j * B.h / 6], [B.x + B.w - 2 - j * 1.6, B.y + j * B.h / 6]], .3, '#5E4528', 'inkfine', 0);
   paint(ellPts(B.x + B.w / 2, B.y, B.w / 2, 6, 14), { wash: '#7E5F38', ink: PAL.ink, sw: .5 });
 }
-// the wall map, small in the room
+// the wall map, small in the room: the same sheet as up close (views2.js), sea, neighbours, provinces and all
 function paintMapSmall() {
-  const M = ROOM.map;
+  const M = ROOM.map, path = (ring) => { C.beginPath(); ring.forEach(([lon, lat], i) => { const [x, y] = mapXY(lat, lon, 160, 230); i ? C.lineTo(x, y) : C.moveTo(x, y); }); C.closePath(); };
   boilSeed('mapsmall');
   paint(rectPts(M.x - 6, M.y - 6, M.w + 12, M.h + 12, .6), { wash: '#4F3B2A', ink: PAL.ink, sw: .6 });
-  paint(rectPts(M.x, M.y, M.w, M.h, .5), { wash: '#E7DCC0', ink: PAL.ink, sw: .4 });
-  push(); translate(M.x + 8, M.y + 14); scale(M.w / 168, (M.h - 20) / 236);
-  for (const p of MAPGEO.provinces) for (const ring of p.rings) {
-    if (ring.length < 8) continue;
-    paint(ring.filter((_, i) => i % 3 === 0).map(([lon, lat]) => mapXY(lat, lon, 160, 230)), { wash: '#D9CFA4', tex: 0, pool: .3, ink: '#6C5A40', sw: .25, br: 'inkfine' });
-  }
-  pop();
-  handText('NEDERLAND', M.x + M.w / 2, M.y + 12, 8, '#5A4A36', { font: FONT.fellSC, align: 'center', j: 0 });
+  C.drawImage(paperSheet(M.w, M.h, '#E9DFC4', 12, 1), M.x, M.y, M.w, M.h);
+  C.save(); C.beginPath(); C.rect(M.x + 3, M.y + 18, M.w - 6, M.h - 22); C.clip();
+  C.fillStyle = 'rgba(115,145,160,.5)'; C.fillRect(M.x, M.y, M.w, M.h);
+  push(); translate(M.x + 10, M.y + 44); scale(M.w / 178, M.w / 178);   // the country across the sheet, sea above, Belgium below
+  const land = [...MAPGEO.provinces.flatMap(p => p.rings), ...MAPGEO.neighbours.flatMap(n => n.rings)];
+  C.lineJoin = 'round';
+  for (let i = 4; i >= 1; i--) { C.lineWidth = i * 2.2; C.strokeStyle = `rgba(60,85,100,${.05 + (4 - i) * .02})`; for (const r of land) { path(r); C.stroke(); } }
+  for (const n of MAPGEO.neighbours) for (const r of n.rings) { path(r); C.fillStyle = '#D2C6A6'; C.fill(); }
+  // the tints a shade deeper than up close: seen across the room, by lamplight, pastel goes grey
+  for (const p of MAPGEO.provinces) for (const r of p.rings) { path(r); C.fillStyle = PROV_TINT[p.name] || '#E0D4B0'; C.fill(); C.fillStyle = 'rgba(175,105,50,.16)'; C.fill(); }
+  for (const w of MAPGEO.water) for (const r of w.rings) { path(r); C.fillStyle = 'rgba(110,140,155,.8)'; C.fill(); }
+  C.strokeStyle = 'rgba(70,110,140,.6)'; C.lineWidth = .7;
+  for (const rv of MAPGEO.rivers) for (const line of (rv.lines || rv.rings || [])) { C.beginPath(); line.forEach(([lon, lat], i) => { const [x, y] = mapXY(lat, lon, 160, 230); i ? C.lineTo(x, y) : C.moveTo(x, y); }); C.stroke(); }
+  C.lineWidth = .8; C.strokeStyle = 'rgba(60,40,28,.75)';
+  for (const p of MAPGEO.provinces) for (const r of p.rings) { path(r); C.stroke(); }
+  C.fillStyle = 'rgba(58,48,40,.8)';
+  for (const [, lat, lon] of CITIES) { const [x, y] = mapXY(lat, lon, 160, 230); C.beginPath(); C.arc(x, y, 1.05, 0, TAU); C.fill(); }
+  pop(); C.restore();
+  handText('NEDERLAND', M.x + M.w / 2, M.y + 13, 9, '#4A3A2A', { font: FONT.fellSC, align: 'center', j: 0 });
   for (const [px, py] of [[M.x + 3, M.y + 3], [M.x + M.w - 3, M.y + 3]]) paint(ellPts(px, py, 3, 3, 8), { wash: PAL.red, tex: 0, ink: null });
 }
 // lat/lon to a box of w × h (the map's own projection)
