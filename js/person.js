@@ -294,14 +294,9 @@ function person(x, y, u, o = {}) {
     rs('torso');
     const nb = [sh[0] + .3, sh[1] - 3, sh[2]], nt = [head[0] - 1.2, head[1] - 8, head[2]];
     paint(rib([nb, nt], 14, 13), { wash: skin, tex: 0, pool: 0, ink: edge(skin), sw: sw * .8 * S1 });
-    if (pr.c > .3 && sc > 1.2) {
-      const a = proj([nb[0] + 6.6, nb[1] + 5.5, nb[2]]); inkLine([[a[0] - .9, a[1] - .4], [a[0], a[1] + .3], [a[0] + .9, a[1] - .4]], sw * .45 * S1, ME.skinDk, 'inkfine', .5);
-      // the tips of a chest piece, just above the collar
-      for (const sg of [1, -1]) { const q = proj([nb[0] + 6.2, sh[1] + 2.4, sh[2] + sg * 4.6]); paint([[q[0] - .6, q[1] + .5], [q[0] + .6, q[1] + .5], [q[0] + sg * .5, q[1] - .9]], { wash: ME.tattoo, tex: 0, pool: 0, ink: null }); }
-    }
     const pts = [];
     // collar, the slope of the shoulders, the shoulder corner, under the arms, the hem
-    for (const [up, w, d] of [[sh[1] + 3.4, 7.4, 6], [sh[1] + 2, 15, 8.6], [sh[1] - .6, 20, 10], [sh[1] - 13, 18.6, 10.4], [hem, 19, 10.8]]) {
+    for (const [up, w, d] of [[sh[1] + 3, 7.2, 6], [sh[1] + 1.8, 15, 8.6], [sh[1] - .6, 20, 10], [sh[1] - 13, 18.6, 10.4], [hem, 19, 10.8]]) {
       const fc = lerp(pelvis[0], sh[0], (up - hem) / (sh[1] - hem)), zc = lerp(pelvis[2], sh[2], (up - hem) / (sh[1] - hem));
       for (const sz of [-1, 1]) for (const sf of [-1, 1]) pts.push([fc + sf * d, up, zc + sz * w]);
     }
@@ -311,9 +306,23 @@ function person(x, y, u, o = {}) {
     for (const Q of polys) paint(Q, { ink: edge(ME.tee), sw: sw * 1.8 * S1 });
     for (const Q of polys) paint(Q, { wash: ME.tee, tex: 0, pool: 0, ink: null });
     grainIn(polys, .3);
-    // the crew neck: the shirt's edge round the neck, a stitched band below it
+    // the neckline: a wide U at the front, as in the portrait (shallow at the back), skin above it, a stitched band below
     if (Math.abs(pr.c) > .08) {
-      const s2 = pr.c > 0 ? 1 : -1, arc = (dn, rr) => { const A2 = []; for (let a = -1.4; a <= 1.41; a += .2) A2.push(proj([sh[0] + s2 * rr * 6.4 * Math.cos(a), sh[1] + 2.6 - dn - (s2 > 0 ? 1.7 : .5) * Math.cos(a), sh[2] + rr * 7.2 * Math.sin(a)])); return A2; };
+      const s2 = pr.c > 0 ? 1 : -1, dip = s2 > 0 ? 5.2 : .6;
+      const arc = (dn, rr) => { const A2 = []; for (let a = -1.45; a <= 1.46; a += .145) { const ca = Math.cos(a); A2.push(proj([sh[0] + s2 * rr * 6.6 * ca, sh[1] + 2.6 - dn - dip * Math.pow(ca, 2.2), sh[2] + rr * (s2 > 0 ? 10 : 7.6) * Math.sin(a)])); } return A2; };
+      if (s2 > 0) {
+        // skin above the U, up to the neck: it also covers the shirt's top edge where it crosses the neck
+        const U = arc(0, 1);
+        paint(U.concat([proj([sh[0] + 2, sh[1] + 3.8, sh[2] + 6.6]), proj([sh[0] + 2, sh[1] + 3.8, sh[2] - 6.6])]), { wash: skin, tex: 0, pool: 0, ink: null });
+        if (sc > 1.2 && pr.c > .3) {
+          // the hollow of the throat, a collarbone either side, the tips of a chest piece just above the neckline
+          const a = proj([sh[0] + 6.6, sh[1] + 3.6, sh[2]]); inkLine([[a[0] - .9, a[1] - .4], [a[0], a[1] + .3], [a[0] + .9, a[1] - .4]], sw * .45 * S1, ME.skinDk, 'inkfine', .5);
+          for (const sg of [1, -1]) {
+            inkLine([proj([sh[0] + 6.4, sh[1] + .9, sh[2] + sg * 1.6]), proj([sh[0] + 6, sh[1] + 1.5, sh[2] + sg * 5.2])], sw * .4 * S1, ME.skinDk, 'inkfine', .3);
+            const q = proj([sh[0] + 6.2, sh[1] - 1.2, sh[2] + sg * 4.4]); paint([[q[0] - .6, q[1] + .6], [q[0] + .6, q[1] + .6], [q[0] + sg * .5, q[1] - .9]], { wash: ME.tattoo, tex: 0, pool: 0, ink: null });
+          }
+        }
+      }
       inkLine(arc(0, 1), sw * .9 * S1, edge(ME.tee), 'ink', .5);
       if (sc > 1.2) { const st = arc(1.3, 1.12); for (let i = 0; i + 1 < st.length; i += 2) inkLine([st[i], [lerp(st[i][0], st[i + 1][0], .7), lerp(st[i][1], st[i + 1][1], .7)]], sw * .35 * S1, ME.teeLt, 'inkfine', 0); }
     }
