@@ -120,6 +120,7 @@ js/game.js         the night: drawer states, envelopes, the hand, filing, locks,
 js/views.js        the room, the table, a cabinet up close, the archive behind the divider, the reader
 js/views2.js       the map, typewriter, clock, window, door, cabinet V, halves, strongbox, title, endings
 js/night.js        the director: leaks, room locks waking, enactments, reactions
+js/feast.js        the real calendar outside: tonight's moon, and a few nights of the year (no spoilers)
 js/dev.js          a back door for testing (below)
 js/touch.js        the phone: fingertip reach, tap marks, swipes, back button, sideways, wake lock, vibration
 js/main.js         boot, the frame loop, pointer and keys

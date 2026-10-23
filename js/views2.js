@@ -370,6 +370,7 @@ V.window = {
     const fx = G.fx, Wv = WINV;
     stateLayer('winbig', 'winbig', 0, 0, W, H, paintWindowBig).blit();
     stateLayer('outbig', 'outbig', Wv.gx - 10, Wv.gy - 10, Wv.gw + 20, Wv.gh + 20, () => paintOutsideBox(Wv.gx, Wv.gy, Wv.gw, Wv.gh, Wv.s)).blit();
+    feastWindow(); feastOutside(Wv.gx, Wv.gy, Wv.gw, Wv.gh);
     if (fx.reflect > 0) drawReflection(Wv.gx, Wv.gy, Wv.gw, Wv.gh, fx.reflect);
     if (fx.wolf) drawWolf(Wv.gx, Wv.gy, Wv.gw, Wv.gh, Wv.s);
     drawMist(Wv.gx, Wv.gy, Wv.gw, Wv.gh, fx.mistLevel, Wv.s);
@@ -377,13 +378,15 @@ V.window = {
     const age = T - this.flipT, readable = age < 1.3 ? 1 : age < 1.7 ? 1 - ease((age - 1.3) / .4) : 0;
     if (fx.writing) drawWriting(Wv.gx, Wv.gy, Wv.gw, Wv.gh, Wv.s, readable);
     stateLayer('winframebig', 'winframebig', 0, 0, W, H, paintWindowFrameBig).blit();
+    feastWindowSill();
     nightGrade(W / 2, 420, .15, { r: 1400 });
+    feastWindowGlow();
     if (fx.sillCard) { const card = G.cardView(fx.sillCard.key); drawCard(card, W / 2 - 170, 1000 - 110, 340, { rot: -.03 }); }
     // the sill takes a card
     if (G.S.hand && G.S.hand.kind === 'card') {
       C.save(); C.globalAlpha = .4 + .2 * Math.sin(T * 4); C.strokeStyle = '#FFE6A8'; C.lineWidth = 5; C.setLineDash([14, 10]); C.strokeRect(Wv.gx - 60, 990, Wv.gw + 120, 70); C.restore();
       UI.hit({ r: [Wv.gx - 60, 980, Wv.gw + 120, 90], tip: 'Op de vensterbank leggen', onClick: () => G.offerObject('window') });
-    } else UI.hit({ r: [Wv.gx, Wv.gy, Wv.gw, Wv.gh], tip: null, cursor: 'default', onClick: () => { this.flipT = T - .2; } });
+    } else { UI.hit({ r: [Wv.gx, Wv.gy, Wv.gw, Wv.gh], tip: null, cursor: 'default', onClick: () => { this.flipT = T - .2; } }); feastWindowHits(); }
     drawPeek({ x: 1720, u: 32 });
     backButton(() => openView('room'));
   },

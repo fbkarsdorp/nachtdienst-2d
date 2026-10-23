@@ -228,11 +228,12 @@ function paintOutside() {
   sky.addColorStop(0, '#1B2147'); sky.addColorStop(.6, '#2C3A6E'); sky.addColorStop(1, '#3A4675');
   C.fillStyle = sky; C.fillRect(gx - 4 * k, gy - 4 * k, gw + 8 * k, gh + 8 * k);
   for (let i = 0; i < 26; i++) { const sx = gx + hash(i * 3.3) * gw, sy = gy + hash(i * 8.1) * gh * .45; paint(ellPts(sx, sy, 1.2 * k, 1.2 * k, 6), { wash: '#E9E4FF', tex: 0, pool: 0, washOp: 120 + hash(i) * 120, ink: null }); }
-  // the moon over the gables
-  const mx = gx + gw * .72, my = gy + 74 * k;
-  glow(mx, my, 90 * k, '#B8C6F0', .55);
-  paint(ellPts(mx, my, 21 * k, 21 * k, 24), { wash: PAL.moon, tex: .4, ink: null });
-  paint(ellPts(mx + 5 * k, my - 4 * k, 5 * k, 4 * k, 10), { fill: '#AEB8D2', fillOp: 120, layers: 2, ink: null });
+  // the moon over the gables: tonight's moon (feast.js), the dark of it just showing
+  const mx = gx + gw * .72, my = gy + 74 * k, lit = MOON.lit;
+  glow(mx, my, 90 * k, '#B8C6F0', .55 * (.2 + .8 * lit));
+  paint(ellPts(mx, my, 21 * k, 21 * k, 24), { wash: '#2A3164', tex: .3, ink: null });
+  if (lit > .02) paint(moonPts(mx, my, 21 * k, MOON.p), { wash: PAL.moon, tex: .4, ink: null });
+  if (lit > .85) paint(ellPts(mx + 5 * k, my - 4 * k, 5 * k, 4 * k, 10), { fill: '#AEB8D2', fillOp: 120, layers: 2, ink: null });
   // the far side of the canal: gables with a few lit windows
   const base = gy + gh * .66;
   let x = gx - 10 * k, i = 0;
@@ -244,6 +245,7 @@ function paintOutside() {
     else P.push([x + bw * .15, top + 8 * k], [x + bw * .3, top + 8 * k], [x + bw * .3, top - 4 * k], [x + bw * .7, top - 4 * k], [x + bw * .7, top + 8 * k], [x + bw * .85, top + 8 * k]);
     P.push([x + bw, top + 26 * k], [x + bw, base]);
     paint(P, { wash: mixCol('#1F2443', '#2A2E52', hash(i)), tex: .3, ink: '#141830', sw: .5 * k });
+    if (FEAST === 'kerst') inkLine(P.slice(1, -1), 1.5 * k, '#E6EAF4', 'ink', .12);   // snow on the roofs
     for (let r = 0; r < 4; r++) for (let c = 0; c < 2; c++) {
       const wx = x + bw * (.25 + c * .32), wy = top + (34 + r * 26) * k; if (wy > base - 18 * k) continue;
       const lit = hash(i * 13 + r * 3 + c) > .78, tv = lit && hash(i * 7 + r) > .8;
@@ -266,11 +268,15 @@ function paintOutside() {
   for (let j = 0; j < 10; j++) {
     const wy = base + (20 + j * 10) * k, wl = (20 + hash(j) * 40) * k;
     inkLine([[lx - wl / 2 + jit(4 * k), wy], [lx + wl / 2 + jit(4 * k), wy]], .5 * k, '#E9C77D', 'inkfine', 0);
-    inkLine([[mx - 12 * k, wy + 4 * k], [mx + 12 * k, wy + 4 * k]], .4 * k, '#AEB8D8', 'inkfine', 0);
+    if (lit > .1) inkLine([[mx - 12 * k * lit, wy + 4 * k], [mx + 12 * k * lit, wy + 4 * k]], .4 * k, '#AEB8D8', 'inkfine', 0);
   }
   // the zinc ledge just outside the glass
   paint(rectPts(gx - 6 * k, gy + gh - 26 * k, gw + 12 * k, 30 * k, .5), { wash: '#69707E', tex: .6, ink: '#1A1C28', sw: .5 * k });
   inkLine([[gx - 6 * k, gy + gh - 26 * k], [gx + gw + 6 * k, gy + gh - 26 * k]], .5 * k, '#A9B0BE', 'inkfine', 0);
+  if (FEAST === 'kerst') {
+    paint(rectPts(gx - 6 * k, gy + gh - 30 * k, gw + 12 * k, 7 * k, .6), { wash: '#E9EDF6', tex: .3, ink: null });
+    paint(rectPts(gx - 6 * k, base - 2 * k, gw + 12 * k, 6 * k, .5), { wash: '#C9D0E2', tex: .3, ink: null });
+  }
 }
 function windowPanes() {
   const { gx, gy, gw, gh } = ROOM.window, out = [], meet = gy + gh * .49;

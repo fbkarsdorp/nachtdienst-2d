@@ -40,8 +40,8 @@ function charLight(lm, k = .5) {
 function roomLight() {
   const fx = G.fx, lamp = clamp(fx.flick) * (1 - fx.lampOff), morning = fx.morning;
   return {
-    ambient: mixCol('#45476E', '#B9B3A6', morning), lamp: lamp * (1 - morning * .8), moon: (1 - G.mistK() * .75) * (1 - morning) * (fx.wolfShade ? .45 : 1),
-    door: 1 - morning, doorOpen: fx.doorOpen, extra: morning > 0 ? [[1330, 420, 700, '#D8DCE0', .5 * morning, 1]] : null,
+    ambient: mixCol('#45476E', '#B9B3A6', morning), lamp: lamp * (1 - morning * .8), moon: (1 - G.mistK() * .75) * (1 - morning) * (fx.wolfShade ? .45 : 1) * (.45 + .55 * MOON.lit),
+    door: 1 - morning, doorOpen: fx.doorOpen, extra: [...(morning > 0 ? [[1330, 420, 700, '#D8DCE0', .5 * morning, 1]] : []), ...feastLight()],
   };
 }
 G.mistK = () => clamp(G.fx.mistLevel / 3);
@@ -142,7 +142,7 @@ V.room = {
     updateWalk();
     // the wall, the cabinets, the clock, the window, the door
     RL.back.blit();
-    const month = ['JANUARI', 'FEBRUARI', 'MAART', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AUGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOVEMBER', 'DECEMBER'][new Date().getMonth()];
+    const month = ['JANUARI', 'FEBRUARI', 'MAART', 'APRIL', 'MEI', 'JUNI', 'JULI', 'AUGUSTUS', 'SEPTEMBER', 'OKTOBER', 'NOVEMBER', 'DECEMBER'][DAY.getMonth()];
     stateLayer('cal', month, 270, 310, 100, 130, () => paintCalendar(month)).blit();
     for (const c of CABS) drawCabinetRoom(c);
     RL.clock.blit();
@@ -151,6 +151,7 @@ V.room = {
     drawWindowRoom();
     RL.frame.blit(); RL.curtain.blit();
     RL.map.blit();
+    feastRoom();
     paintDoorLeaf(fx.doorOpen, fx.shiver * Math.sin(T * 70) * 2);
     if (S.fired.floor && G.where(S.fired.floor) === 'floor') drawFloorCard();
     stateLayer('coat', 'coat' + !!G.foundAt('coat'), 240, 420, 160, 420, () => paintCoat(!!G.foundAt('coat'))).blit();
@@ -159,6 +160,7 @@ V.room = {
     applyLight(L);
     // ghostly things glow through the dark
     drawLeakGlow();
+    feastRoomGlow();
     // Clawd, lit to stay readable
     const cx = G.clawd.x;
     const up = tableHop() > .5;
@@ -197,6 +199,7 @@ V.room = {
     UI.hit({ r: [ROOM.spike.x - 10, ROOM.spike.y - 10 - R, ROOM.spike.w + 20, ROOM.spike.h + 10], tip: 'De prikker', onClick: go('table', () => openView('table', null, [930, 860])) });
     UI.hit({ r: [ROOM.basket.x - 10, ROOM.basket.y - 20, ROOM.basket.w + 20, ROOM.basket.h + 20], tip: 'De prullenbak', onClick: go('basket', () => clickFound('bin', 'Snippers. Niets.')) });
     if (S.fired.floor && G.where(S.fired.floor) === 'floor') UI.hit({ r: [180, 880, 140, 60], tip: 'Een kaart op de vloer', onClick: () => walkTo(250, 'front', () => G.pickUp('floor')) });
+    feastRoomHits();
   },
 };
 // dust drifting through the lamplight: nothing in the room is ever quite still
@@ -229,6 +232,7 @@ function drawTableRoom() {
   if (wob) pop();
   // the lamp's foot, which wobbles when a card is pulled from under it
   if (G.foundAt('lamp')) { boilSeed('lampcard'); paint(rectPts(ROOM.lamp.cx + 10, 851, 46, 6, .3), { wash: PAL.card, tex: 0, ink: PAL.ink, sw: .4 }); }
+  paintOliebollen();
   pop();
   stateLayer('basket', 'b' + !!G.foundAt('bin'), 1320, 930, 110, 130, () => paintBasket(!!G.foundAt('bin'))).blit();
 }
@@ -319,6 +323,7 @@ function drawLeakGlow() {
 function drawWindowRoom() {
   const fx = G.fx, Gw = ROOM.window;
   RL.outside.blit();
+  feastOutside(Gw.gx, Gw.gy, Gw.gw, Gw.gh);
   if (fx.reflect > 0) drawReflection(Gw.gx, Gw.gy, Gw.gw, Gw.gh, fx.reflect);
   if (fx.wolf) drawWolf(Gw.gx, Gw.gy, Gw.gw, Gw.gh, 1);
   drawMist(Gw.gx, Gw.gy, Gw.gw, Gw.gh, fx.mistLevel, 1);
