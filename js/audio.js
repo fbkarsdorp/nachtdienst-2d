@@ -103,7 +103,7 @@ const SND = {
   riffle() { for (let i = 0; i < 9; i++) this.burst({ t: i * .045, dur: .03, f: 3500 + i * 120, q: 2, vol: .06 }); },
   click() { this.burst({ dur: .015, f: 2600, q: 5, vol: .12 }); },
   creak(x = 160) { this.tone({ f: 180, dur: 1.4, vol: .05, type: 'sawtooth', pan: this.panX(x), glide: 1.6, attack: .3 }); },
-  // ---------- ambience: room tone, wind at the glass, the lamp ----------
+  // ---------- ambience: room tone, wind at the glass, the lamp (which only buzzes when it flickers) ----------
   ambience() {
     const c = this.ctx;
     const loop = (f, q, vol, type = 'lowpass') => {
@@ -120,7 +120,7 @@ const SND = {
   },
   setWind(k) { if (this.nodes.wind) this.nodes.wind.g.gain.setTargetAtTime(.012 + .05 * k, this.ctx.currentTime, .8); },
   // (a narrow band of noise carries little energy, so most noise-based sounds need lifting; measured, peak dBFS)
-  setHum(k) { if (this.nodes.hum) this.nodes.hum.gain.setTargetAtTime(.012 * k, this.ctx.currentTime, .03); },
+  setHum(k) { if (this.nodes.hum) this.nodes.hum.gain.setTargetAtTime(.016 * k, this.ctx.currentTime, .03); },
 };
 const LEVELS = { tick: 13.5, catchTick: 22, whirr: 24, keyTurn: 13, drawer: 16, pencil: 13, step: 18, gravel: 9, key: 11, carriage: 14,
   nee: 10, good: 6, squeak: 11, scratch: 16, breath: 14, riffle: 14, click: 17, creak: 7 };

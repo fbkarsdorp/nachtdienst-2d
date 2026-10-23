@@ -54,7 +54,11 @@ const N = {
       flick *= fx.dim;
     } else this.nextFlick = T + 6;
     fx.flick = flick;
-    SND.setHum(fx.lampOff > .5 ? 0 : flick > .8 ? 1 : .2);
+    // a steady lamp is silent; one that flickers buzzes, and crackles as it catches
+    const flickering = fx.lampOff <= .5 && flick < .8;
+    SND.setHum(flickering ? 1 : 0);
+    if (flickering && !this.wasFlick) SND.burst({ dur: .06, f: 3800, q: 1.5, vol: .05, pan: SND.panX(ROOM.lamp.cx), wet: .3 });
+    this.wasFlick = flickering;
     // ---------- knocking at the door (R3) ----------
     const r3 = G.cab(3).drawers[2], r3awake = S.woke[r3.id] && !['solved', 'filed'].includes(S.drawers[r3.id]);
     if (r3awake && T > (this.nextKnock || 0)) {
