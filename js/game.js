@@ -113,11 +113,15 @@ const G = {
     }).length;
     const hints = (d.hints || []).slice(0, this.S.hints[id] || 0);
     const fc = d.found_card && this.S.found[id];
-    let found = null;
-    if (fc && this.where(`${id}/${fc.card}`).startsWith('found')) found = fc.loc === 'bin' ? null : this.F.found_notes[fc.loc];
+    let found = null, foundOther = false;
+    // J.J.V. says where he left it; the bin he does not own up to, so the other hand does
+    if (fc && this.where(`${id}/${fc.card}`).startsWith('found')) {
+      foundOther = fc.loc === 'bin';
+      found = foundOther ? 'hij heeft er één weggegooid' : this.F.found_notes[fc.loc];
+    }
     const other = this.S.fired.otherHandOn === id ? this.F.reactions.other_hand : null;
     return { id, note: d.note, count, have: counted, sealed: !!this.S.sealed[id], filed: st === 'filed', open: this.S.envOpen && this.S.env === id && !this.S.sealed[id],
-      hints, found, other, ver: [st, count, counted, hints.length, !!this.S.sealed[id], this.S.envOpen, found, other].join('.') };
+      hints, found, foundOther, other, ver: [st, count, counted, hints.length, !!this.S.sealed[id], this.S.envOpen, found, other].join('.') };
   },
   cardView(key) {
     if (key === 'note') return { key: 'note', kind: 'note', text: this.F.note_table, r: {} };

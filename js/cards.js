@@ -251,11 +251,11 @@ function paintEnvelope(env) {
   let y = env.open ? 220 : 340;
   const lines = [];
   if (env.note) lines.push({ txt: env.note });
-  if (env.found) lines.push({ txt: env.found });
+  if (env.found) lines.push({ txt: env.found, other: env.foundOther });
   for (const h of env.hints || []) lines.push({ txt: h, hint: true });
   for (const l of lines) {
     const size = l.hint ? 34 : 42;
-    y += pencilNote(l.txt, 48, y, EW - 100, size, { rot: l.hint ? -.012 : -.02, col: l.hint ? '#4F4660' : '#3A3248' }) + 10;
+    y += pencilNote(l.txt, 48, y, EW - 100, size, { rot: l.hint ? -.012 : -.02, col: l.hint ? '#4F4660' : '#3A3248', other: l.other }) + 10;
     if (y > EH - 30) break;
   }
   if (env.other) pencilNote(env.other, EW - 330, EH - 40, 300, 22, { other: true, rot: .05 });

@@ -365,7 +365,6 @@ function paintClockBig() {
 // ---------- the window ----------
 const WINV = (() => { const s = 2.1, gw = 264 * s, gh = 456 * s; return { s, gx: W / 2 - gw / 2, gy: 24, gw, gh }; })();
 V.window = {
-  enter() { this.flipT = T; },
   draw() {
     const fx = G.fx, Wv = WINV;
     stateLayer('winbig', 'winbig', 0, 0, W, H, paintWindowBig).blit();
@@ -374,9 +373,8 @@ V.window = {
     if (fx.reflect > 0) drawReflection(Wv.gx, Wv.gy, Wv.gw, Wv.gh, fx.reflect);
     if (fx.wolf) drawWolf(Wv.gx, Wv.gy, Wv.gw, Wv.gh, Wv.s);
     drawMist(Wv.gx, Wv.gy, Wv.gw, Wv.gh, fx.mistLevel, Wv.s);
-    // at the window the view flips for a moment, so the writing reads
-    const age = T - this.flipT, readable = age < 1.3 ? 1 : age < 1.7 ? 1 - ease((age - 1.3) / .4) : 0;
-    if (fx.writing) drawWriting(Wv.gx, Wv.gy, Wv.gw, Wv.gh, Wv.s, readable);
+    // written from outside, so it stays mirrored up close too: reading it is the puzzle
+    if (fx.writing) drawWriting(Wv.gx, Wv.gy, Wv.gw, Wv.gh, Wv.s);
     stateLayer('winframebig', 'winframebig', 0, 0, W, H, paintWindowFrameBig).blit();
     feastWindowSill();
     nightGrade(W / 2, 420, .15, { r: 1400 });
@@ -386,7 +384,7 @@ V.window = {
     if (G.S.hand && G.S.hand.kind === 'card') {
       C.save(); C.globalAlpha = .4 + .2 * Math.sin(T * 4); C.strokeStyle = '#FFE6A8'; C.lineWidth = 5; C.setLineDash([14, 10]); C.strokeRect(Wv.gx - 60, 990, Wv.gw + 120, 70); C.restore();
       UI.hit({ r: [Wv.gx - 60, 980, Wv.gw + 120, 90], tip: 'Op de vensterbank leggen', onClick: () => G.offerObject('window') });
-    } else { UI.hit({ r: [Wv.gx, Wv.gy, Wv.gw, Wv.gh], tip: null, cursor: 'default', onClick: () => { this.flipT = T - .2; } }); feastWindowHits(); }
+    } else feastWindowHits();
     drawPeek({ x: 1720, u: 32 });
     backButton(() => openView('room'));
   },

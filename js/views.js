@@ -234,7 +234,7 @@ function drawTableRoom() {
   if (G.foundAt('lamp')) { boilSeed('lampcard'); paint(rectPts(ROOM.lamp.cx + 10, 851, 46, 6, .3), { wash: PAL.card, tex: 0, ink: PAL.ink, sw: .4 }); }
   paintOliebollen();
   pop();
-  stateLayer('basket', 'b' + !!G.foundAt('bin'), 1320, 930, 110, 130, () => paintBasket(!!G.foundAt('bin'))).blit();
+  stateLayer('basket', 'b' + !!G.foundAt('bin'), 1320, 900, 110, 160, () => paintBasket(!!G.foundAt('bin'))).blit();
 }
 function paintKitSmall(type, open) {
   boilSeed('kit' + type);
@@ -359,14 +359,14 @@ function panesOf(gx, gy, gw, gh) {
   return out;
 }
 // the name in the mist, written from outside (mirrored), or the figure after it
-function drawWriting(gx, gy, gw, gh, s, readable = 0) {
+function drawWriting(gx, gy, gw, gh, s) {
   const w = G.fx.writing; if (!w) return;
   const age = T - w.t, k = clamp(age / (w.slow ? 3.2 : 1.2)), fade = w.fadeT ? 1 - seg(T, w.fadeT, w.fadeT + 1.4) : 1;
   if (fade <= 0) return;
   boilSeed('writing');
   C.save();
   C.beginPath(); C.rect(gx, gy, gw, gh * .48); C.clip();
-  C.translate(gx + gw / 2, gy + gh * (w.digit ? .2 : .24)); C.scale(lerp(-1, 1, readable), 1);
+  C.translate(gx + gw / 2, gy + gh * (w.digit ? .2 : .24)); C.scale(-1, 1);
   const size = w.digit ? gh * .3 : Math.min(gw * .8 / (Math.max(4, w.text.length) * .5), gh * .17);
   C.font = `600 ${size}px ${FONT.hand}`; C.textAlign = 'center'; C.textBaseline = 'middle';
   // revealed as if written: a clip that grows from left (seen from outside: right)

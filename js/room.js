@@ -503,14 +503,18 @@ function paintTypewriter(paper) {
 function paintBasket(card) {
   const B = ROOM.basket;
   boilSeed('basket');
-  if (card) {
-    paint(ellPts(B.x + B.w / 2 + 6, B.y + 6, 15, 11, 9, 3), { wash: PAL.card, tex: 0, ink: PAL.ink, sw: .5 });
-    inkLine([[B.x + B.w / 2 - 2, B.y + 2], [B.x + B.w / 2 + 12, B.y + 8], [B.x + B.w / 2 + 4, B.y + 12]], .3, PAL.ink, 'inkfine', .5);
-  }
   paint([[B.x, B.y], [B.x + B.w, B.y], [B.x + B.w - 10, B.y + B.h], [B.x + 10, B.y + B.h]], { wash: '#9B7A4E', ink: PAL.ink, sw: .7 });
   for (let i = 1; i < 7; i++) inkLine([[B.x + i * B.w / 7, B.y + 4], [B.x + 10 + i * (B.w - 20) / 7, B.y + B.h - 4]], .35, '#5E4528', 'inkfine', 0);
   for (let j = 1; j < 6; j++) inkLine([[B.x + 2 + j * 1.6, B.y + j * B.h / 6], [B.x + B.w - 2 - j * 1.6, B.y + j * B.h / 6]], .3, '#5E4528', 'inkfine', 0);
   paint(ellPts(B.x + B.w / 2, B.y, B.w / 2, 6, 14), { wash: '#7E5F38', ink: PAL.ink, sw: .5 });
+  // a crumpled card, balled up and poking out of the top: big enough to see across the room
+  if (card) {
+    const cx = B.x + B.w / 2 + 4, cy = B.y - 10;
+    paint(ellPts(cx, cy, 25, 19, 11, 5), { wash: PAL.card, tex: 0, ink: PAL.ink, sw: .7 });
+    inkLine([[cx - 16, cy - 6], [cx - 2, cy + 2], [cx + 14, cy - 8]], .45, PAL.ink, 'inkfine', .5);
+    inkLine([[cx - 6, cy - 16], [cx, cy - 2], [cx - 8, cy + 14]], .4, PAL.ink, 'inkfine', .5);
+    inkLine([[cx + 4, cy + 4], [cx + 18, cy + 8]], .35, PAL.red, 'inkfine', .3);
+  }
 }
 // the wall map, small in the room: the same sheet as up close (views2.js), sea, neighbours, provinces and all
 function paintMapSmall() {
