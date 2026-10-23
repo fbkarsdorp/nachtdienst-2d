@@ -3,7 +3,7 @@
 'use strict';
 
 const SND = {
-  ctx: null, master: null, room: null, dry: null, on: true, started: false, samples: {}, nodes: {},
+  ctx: null, master: null, room: null, dry: null, on: true, started: false, samples: {}, nodes: {}, boost: 1,
   init() {
     if (this.ctx) return;
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
@@ -43,20 +43,21 @@ const SND = {
     if (!this.ctx) return; const c = this.ctx, t0 = c.currentTime + t;
     const s = c.createBufferSource(); s.buffer = this.noise; s.playbackRate.value = .8 + Math.random() * .4;
     const fl = c.createBiquadFilter(); fl.type = type; fl.frequency.value = f; fl.Q.value = q;
-    const g = c.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + attack); g.gain.setTargetAtTime(0, t0 + attack, dur / curve);
+    vol *= this.boost; const g = c.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + attack); g.gain.setTargetAtTime(0, t0 + attack, dur / curve);
     s.connect(fl); fl.connect(g); g.connect(this.out(pan, wet)); s.start(t0, Math.random()); s.stop(t0 + dur * 3 + .1);
   },
   tone({ t = 0, f = 440, dur = .3, vol = .2, type = 'sine', pan = 0, wet = .6, attack = .004, glide = 0 } = {}) {
     if (!this.ctx) return; const c = this.ctx, t0 = c.currentTime + t;
     const o = c.createOscillator(); o.type = type; o.frequency.setValueAtTime(f, t0); if (glide) o.frequency.exponentialRampToValueAtTime(Math.max(20, f * glide), t0 + dur);
-    const g = c.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + attack); g.gain.setTargetAtTime(0, t0 + attack, dur / 4);
+    vol *= this.boost; const g = c.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + attack); g.gain.setTargetAtTime(0, t0 + attack, dur / 4);
     o.connect(g); g.connect(this.out(pan, wet)); o.start(t0); o.stop(t0 + dur * 1.6 + .1);
   },
   // ---------- the clock ----------
   tick(loud = 0, tock = false, x = 1110) {
     const p = this.panX(x), v = .05 + loud * .11;
-    this.burst({ dur: .018, f: tock ? 2300 : 2900, q: 9, vol: v, pan: p, wet: .4 });
-    this.burst({ t: .004, dur: .03, f: tock ? 800 : 1000, q: 4, vol: v * .5, pan: p, wet: .5 });
+    this.burst({ dur: .012, f: tock ? 2400 : 3000, q: 2.5, vol: v, pan: p, wet: .35 });
+    this.tone({ f: tock ? 1580 : 1870, dur: .045, vol: v * .35, type: 'triangle', pan: p, wet: .5, attack: .001 });
+    this.burst({ t: .003, dur: .035, f: tock ? 700 : 850, q: 2, vol: v * .6, pan: p, wet: .55 });
   },
   catchTick(x = 1110) { for (let i = 0; i < 3; i++) this.burst({ t: i * .045, dur: .015, f: 2600 - i * 200, q: 8, vol: .1, pan: this.panX(x) }); },
   bell(t, f, vol = .18, x = 1110) {
@@ -102,5 +103,12 @@ const SND = {
     this.nodes.hum = hg;
   },
   setWind(k) { if (this.nodes.wind) this.nodes.wind.g.gain.setTargetAtTime(.012 + .05 * k, this.ctx.currentTime, .8); },
+  // (a narrow band of noise carries little energy, so most noise-based sounds need lifting; measured, peak dBFS)
   setHum(k) { if (this.nodes.hum) this.nodes.hum.gain.setTargetAtTime(.012 * k, this.ctx.currentTime, .03); },
 };
+const LEVELS = { tick: 13.5, catchTick: 22, whirr: 24, keyTurn: 13, drawer: 16, pencil: 13, step: 18, gravel: 9, key: 11, carriage: 14,
+  nee: 10, good: 6, squeak: 11, scratch: 16, breath: 14, riffle: 14, click: 17, creak: 7 };
+for (const [k, db] of Object.entries(LEVELS)) {
+  const f = SND[k];
+  SND[k] = function (...a) { const b = this.boost; this.boost = b * Math.pow(10, db / 20); try { return f.apply(this, a); } finally { this.boost = b; } };
+}
