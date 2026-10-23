@@ -135,6 +135,12 @@ fonts/, sounds/    Special Elite, Caveat, Homemade Apple, IM Fell English; card 
 Word and number answers are only in the bundles as salted SHA-256 hashes, as in the original; the game hashes what is
 typed or dialled and compares.
 
+## Sharing
+
+`social/og-image.png` (1200×630) is what a shared link shows, through the Open Graph tags in `index.html`; they point
+at the GitHub Pages address. `social/github-preview.png` (1280×640) is for the repository's own social preview, set
+by hand under Settings → General → Social preview.
+
 ## Sources
 
 - Stories: Nederlandse Volksverhalenbank, Meertens Instituut (KNAW), www.verhalenbank.nl. Each card's violet stamp
