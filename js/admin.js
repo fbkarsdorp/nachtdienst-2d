@@ -1,14 +1,13 @@
-// admin.js: a small panel for testing without playing the whole night. Turn it on with ?admin (it stays on for this
-// browser; ?admin=0 turns it off), then the ⚙ in the corner opens it. It plays on DEV (dev.js): jump to any drawer,
+// admin.js: a small panel for testing without playing the whole night. It is there only with ?admin in the address;
+// the ⚙ in the corner opens it. It plays on DEV (dev.js): jump to any drawer,
 // solve or skip it, skip whole cabinets and the scenes between them, go to cabinet V or either ending, set the hour.
 'use strict';
 
 const ADMIN = (() => {
-  const KEY = 'nachtdienst-admin', q = new URLSearchParams(location.search);
-  try { if (q.has('admin')) q.get('admin') === '0' ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, '1'); } catch (e) { /* no storage */ }
-  let on = q.has('admin') && q.get('admin') !== '0';
-  try { on = on || localStorage.getItem(KEY) === '1'; } catch (e) { /* no storage */ }
-  return { on, open: false, skip: true, el: null, btn: null };
+  const q = new URLSearchParams(location.search);
+  // it once stayed on for the browser; forget that
+  try { localStorage.removeItem('nachtdienst-admin'); } catch (e) { /* no storage */ }
+  return { on: q.has('admin') && q.get('admin') !== '0', open: false, skip: true, el: null, btn: null };
 })();
 
 const TYPE_NAME = { P1: 'etiket (wat alle vier noemen)', P2: 'plaats op de kaart', P3: 'één hoort hier niet', P4: 'doorgescheurde kaart',
@@ -87,9 +86,9 @@ const AD = {
   },
   setHour(h, m) { G.S.played = Math.max(0, (h * 60 + m - (21 * 60 + 15) - G.S.penalty) * 60); },
   restart(seed, date) {
-    const p = new URLSearchParams(); p.set('go', ''); p.set('seed', seed); if (date) p.set('date', date);
+    const p = new URLSearchParams(); p.set('admin', ''); p.set('go', ''); p.set('seed', seed); if (date) p.set('date', date);
     const name = G.S && G.S.name; if (name) p.set('name', name);
-    location.search = p.toString().replace('go=&', 'go&');
+    location.search = p.toString().replace(/=(&|$)/g, '$1');
   },
 };
 
