@@ -1,0 +1,15 @@
+Card and envelope sounds, from two packs by Kenney Vleugels (www.kenney.nl):
+Casino Audio 1.1 and RPG Audio. License: Creative Commons Zero (CC0),
+http://creativecommons.org/publicdomain/zero/1.0/
+
+Trimmed to start just before the sound, made mono, peak at -1 dBFS, mp3.
+
+take-1..8   card-slide-1..8          (Casino Audio)
+place-1..4  card-place-1..4          (Casino Audio)
+shove-1..4  card-shove-1..4          (Casino Audio)
+out-1..2    cards-pack-take-out-1..2 (Casino Audio)
+flap-1..2   cards-pack-open-1..2     (Casino Audio)
+fan-1..2    card-fan-1..2            (Casino Audio)
+flip-1      bookFlip3, first 0.22 s  (RPG Audio)
+flip-2      bookFlip1, first 0.25 s  (RPG Audio)
+flip-3      bookOpen                 (RPG Audio)

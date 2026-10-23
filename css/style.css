@@ -1,0 +1,33 @@
+/* Nachtdienst: one painted canvas, letterboxed in the night. */
+@font-face { font-family: "Special Elite L"; src: url(../fonts/special-elite.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC; font-display: block; }
+@font-face { font-family: "Special Elite L"; src: url(../fonts/special-elite-ext.woff2) format("woff2"); unicode-range: U+0100-02BA, U+1E00-1EFF; font-display: block; }
+@font-face { font-family: "Caveat L"; src: url(../fonts/caveat-latin.woff2) format("woff2"); font-weight: 400 700; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC; font-display: block; }
+@font-face { font-family: "Caveat L"; src: url(../fonts/caveat-latin-ext.woff2) format("woff2"); font-weight: 400 700; unicode-range: U+0100-02BA, U+1E00-1EFF; font-display: block; }
+@font-face { font-family: "Homemade Apple L"; src: url(../fonts/homemade-apple.woff2) format("woff2"); font-display: block; }
+@font-face { font-family: "IM Fell English L"; src: url(../fonts/im-fell.woff2) format("woff2"); font-display: block; }
+@font-face { font-family: "IM Fell English L"; src: url(../fonts/im-fell-italic.woff2) format("woff2"); font-style: italic; font-display: block; }
+@font-face { font-family: "IM Fell English SC L"; src: url(../fonts/im-fell-sc.woff2) format("woff2"); font-display: block; }
+
+:root { --night: #14111a; --ink: #2b2233; --paper: #f3ebdc; color-scheme: dark; }
+html, body { height: 100%; margin: 0; background: var(--night); overflow: hidden; }
+body { display: grid; place-items: center; -webkit-tap-highlight-color: transparent; }
+#stage { position: relative; width: min(100vw, calc(100vh * 16 / 9)); aspect-ratio: 16 / 9; max-width: 100%; }
+@supports (height: 100dvh) { #stage { width: min(100vw, calc(100dvh * 16 / 9)); } }
+#screen { display: block; width: 100%; height: 100%; touch-action: none; user-select: none; -webkit-user-select: none; outline: none; }
+#keys { position: absolute; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; border: 0; padding: 0; pointer-events: none; font-size: 16px; }
+#loading { position: absolute; inset: 0; display: grid; place-items: center; background: var(--night); color: var(--paper); font: 28px "Caveat", "Caveat L", cursive; letter-spacing: .02em; transition: opacity .8s; }
+#loading.gone { opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { #loading { transition: none; } }
+#storylink { position: absolute; display: block; cursor: pointer; border-radius: 12px; }
+#storylink:focus-visible { outline: 3px solid #e8aa38; }
+#saveview { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(14, 10, 20, .82); }
+#saveview figure { margin: 0; max-width: 86%; display: grid; gap: 14px; justify-items: center; }
+#saveview img { max-width: 100%; max-height: 70vh; box-shadow: 0 10px 40px rgba(0,0,0,.5); }
+#saveview figcaption { color: var(--paper); font: 22px "Caveat", "Caveat L", cursive; text-align: center; }
+#saveview a, #saveview button { color: #f2c66b; font: inherit; background: none; border: 0; cursor: pointer; text-decoration: underline; padding: 0 4px; }
+[hidden] { display: none !important; }
+#turn { display: none; }
+@media (orientation: portrait) and (max-width: 820px) {
+  #turn { display: grid; position: fixed; inset: auto 0 0 0; padding: 18px max(16px, env(safe-area-inset-left, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)); place-items: center; color: var(--paper); font: 24px "Caveat", "Caveat L", cursive; text-align: center; }
+  body { place-items: start center; padding-top: 30vh; }
+}

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nachtdienst</title>
+<meta name="description" content="Een avond in het Centraal Sagenarchief, 1983. Een geschilderd puzzelspel op de verhalen van de Nederlandse Volksverhalenbank.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Homemade+Apple&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Caveat:wght@400;600&display=block">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="screen" width="1920" height="1080" aria-label="Nachtdienst"></canvas>
+  <input id="keys" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Typemachine">
+  <a id="storylink" target="_blank" rel="noopener" hidden title="Naar de Verhalenbank" aria-label="Dit verhaal in de Verhalenbank"></a>
+  <div id="saveview" hidden><figure><img id="saveimg" alt="Je eigen kaart"><figcaption>Rechtsklik of houd vast om de kaart te bewaren. <a id="savelink" download="nachtdienst.png">Bewaar</a> · <button id="saveclose" type="button">Sluiten</button></figcaption></figure></div>
+  <div id="loading"><span>De lamp warmt op…</span></div>
+  <div id="turn"><span>Draai je scherm: de kamer is breed.</span></div>
+</div>
+<script src="data/nights/index.js"></script>
+<script src="data/map.js"></script>
+<script src="data/places.js"></script>
+<script src="data/dots.js"></script>
+<script src="data/archive/index.js"></script>
+<script src="js/core.js"></script>
+<script src="js/paint.js"></script>
+<script src="js/clawd.js"></script>
+<script src="js/cat.js"></script>
+<script src="js/person.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/data.js"></script>
+<script src="js/room.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/game.js"></script>
+<script src="js/views.js"></script>
+<script src="js/views2.js"></script>
+<script src="js/night.js"></script>
+<script src="js/dev.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
