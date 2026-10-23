@@ -116,7 +116,10 @@ function person(x, y, u, o = {}) {
   // which way: a key view, or (while turning) any angle in between
   let th = CAT_YAW[o.view] ?? 0, flip = !!o.flip;
   if (o.yaw != null) { const A = ((o.yaw % TAU) + TAU) % TAU; flip = A > Math.PI + 1e-6; th = flip ? TAU - A : A; }
-  const pr = personProj(th), side = Math.abs(pr.s);
+  // facing left is a real turn, not a mirror image: the left arm stays the left arm, with its own tattoos, and the
+  // right hand keeps the card. (flip still says which way the figure faces on screen.)
+  const yawS = flip ? -th : th, fs = flip ? -1 : 1, lookX = (o.lookX || 0) * fs;
+  const pr = personProj(yawS), side = Math.abs(pr.s);
   const visZ = pr.D(0, 0, 1) >= 0 ? 1 : -1;   // which side of the body faces us
   const sw = clamp(sc * .5, .5, 2.6) * (o.swMul || 1), J = sc * .3;
   const skin = tintCols(o).col, ink = PAL.ink;
@@ -170,8 +173,8 @@ function person(x, y, u, o = {}) {
   if (!o.noShadow && frame !== 'peek') softBlob(x, y + sc * 1.5, sc * lerp(30, 42, side), sc * 7, '#1a1424', .5 * (o.shadowK ?? 1));
   push();
   translate(x, y + dy);
-  rotate((o.rot || 0) * .35 + sway);
-  scale((flip ? -1 : 1) * (1 + sq * .4), 1 - sq);
+  rotate((o.rot || 0) * .35 * fs + sway);
+  scale(1 + sq * .4, 1 - sq);
   scale(sc, sc);
   const S1 = 1 / sc;   // brush widths are in pixels; undo the scale for them
   const items = [];
@@ -195,8 +198,8 @@ function person(x, y, u, o = {}) {
   if (o.emote) {
     const dir = flip ? -1 : 1, [hx, hy] = pr.P(...head), es = frame === 'peek' ? u * .9 : u * 1.05;
     const top = EMOTE_TOP.includes(o.emote) || o.emote === 'music';
-    let ex = x + dir * hx * sc, ey = y + dy + (hy - (top ? 23 : 4)) * sc;
-    if (o.emote === 'breath') { const mo = pr.P(head[0] + 11, head[1] - 7, 0); ex = x + dir * mo[0] * sc + dir * es * .6; ey = y + dy + mo[1] * sc; }
+    let ex = x + hx * sc, ey = y + dy + (hy - (top ? 23 : 4)) * sc;
+    if (o.emote === 'breath') { const mo = pr.P(head[0] + 11, head[1] - 7, 0); ex = x + mo[0] * sc + dir * es * .6; ey = y + dy + mo[1] * sc; }
     else if (!top) { ex += dir * 28 * sc; ey -= 6 * sc; }
     if (o.emote === 'music') ex += dir * 11 * sc;
     emote(o.emote, ex, ey, es * (o.emoteScale || 1), o.emoteK ?? 1, o.emoteAge ?? T);
@@ -399,8 +402,8 @@ function person(x, y, u, o = {}) {
 
   function meHead() {
     rs('head');
-    const hth = th + clamp(o.lookX || 0, -1, 1) * .28, hp = personProj(hth), facing = hp.c;
-    const [hx, hy] = pr.P(...head), tilt = (o.rot || 0) * 1.8 + m.tilt;
+    const hth = yawS + clamp(lookX, -1, 1) * .28, hp = personProj(hth), facing = hp.c;
+    const [hx, hy] = pr.P(...head), tilt = ((o.rot || 0) * 1.8 + m.tilt) * fs;
     push(); translate(hx, hy); rotate(tilt);
     const C0 = [0, 0, 0], A = 11.2, B = 12.3, Hh = 10;
     const stamp = (c, r, k) => ellPts(c[0], c[1], r, r * .93, 12, J * S1 * .3, k * 6);
@@ -446,7 +449,7 @@ function person(x, y, u, o = {}) {
       for (const { sg, sp } of eyes) {
         if (sp.face < .1) continue;
         push(); translate(sp.p[0], sp.p[1]); scale(clamp(sp.face * 1.1, .25, 1), 1);
-        meEye(o, sg * (flip ? -1 : 1), sw * S1 * (sc > 3 ? 1 : .8));
+        meEye({ ...o, lookX }, sg, sw * S1 * (sc > 3 ? 1 : .8));
         pop();
       }
       for (const { sg, sp } of eyes) {
