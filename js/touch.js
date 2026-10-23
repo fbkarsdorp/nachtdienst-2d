@@ -21,8 +21,11 @@ function pickHit(x, y) {
   const exact = UI.find(x, y);
   if (!TOUCH) return exact;
   if (exact && !exact.floor && hitArea(exact) < W * H * .2) return exact;
+  // a sheet over the whole screen (help, colophon, reader, an open drawer) hides what lies under it from the finger too
+  let top = 0;
+  for (let i = UI.hits.length - 1; i >= 0; i--) if (!UI.hits[i].floor && hitArea(UI.hits[i]) >= W * H * .95) { top = i + 1; break; }
   let best = null, bd = REACH;
-  for (let i = UI.hits.length - 1; i >= 0; i--) {
+  for (let i = UI.hits.length - 1; i >= top; i--) {
     const h = UI.hits[i];
     if (h.disabled || h.floor || h === exact || !h.onClick && !h.drag || hitArea(h) >= W * H * .2) continue;
     const d = hitDist(h, x, y); if (d < bd) { bd = d; best = h; }
