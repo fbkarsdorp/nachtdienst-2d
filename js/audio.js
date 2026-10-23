@@ -7,6 +7,8 @@ const SND = {
   init() {
     if (this.ctx) return;
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+    // on an iPhone, play through the silent switch, as a game does (Safari 16.4 and later)
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* older Safari */ }
     const c = this.ctx = new AC();
     this.master = c.createGain(); this.master.gain.value = this.on ? .9 : 0; this.master.connect(c.destination);
     // a small room: a generated impulse response

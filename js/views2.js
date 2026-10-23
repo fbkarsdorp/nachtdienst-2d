@@ -186,7 +186,11 @@ V.typewriter = {
     C.restore();
     if (Math.floor(T * 2) % 2 && pur.kind !== 'r4') { C.fillStyle = 'rgba(184,50,42,.75)'; C.fillRect(TWV.cx - 8, ly + 8, TWV.size * .55, 3); }
     // the machine in front of the paper
-    stateLayer('twbig', 'twbig', 0, 520, W, 560, paintTypewriterBig).blit();
+    stateLayer('twbig', 'twbig' + PHONE, 0, 520, W, 560, paintTypewriterBig).blit();
+    // the keys can be pressed by hand: the one pressed goes down for a moment
+    for (const k of twKeys()) UI.hit({ id: 'tw' + k.key, r: [k.x - k.w / 2, k.y - k.h / 2, k.w, k.h], tip: null, onClick: () => { this.pressed = { k, t: T }; onKey({ key: k.key, preventDefault() {} }); } });
+    const pk = this.pressed;
+    if (pk && T - pk.t < .14) { const k = pk.k; C.save(); C.fillStyle = 'rgba(20,16,24,.4)'; C.beginPath(); C.ellipse(k.x, k.y + 3, k.rx, k.ry, 0, 0, TAU); C.fill(); C.restore(); }
     // a paper tag on the machine says what the typing is for
     if (pur.label) UI.button(pur.label, 1420, 700, { size: 26, rot: .04, flat: true, onClick: () => {} });
     if (G.fx.tw && G.fx.tw.done === false) handText('…', 1500, 600, 40, '#E8DCC0', { font: FONT.hand, j: 0 });
@@ -271,16 +275,29 @@ function paintTypewriterBig() {
   paint([[cx - 700, 1100], [cx + 700, 1100], [cx + 610, 650], [cx - 610, 650]], { wash: '#26242B', ink: PAL.ink, sw: 1.4 });
   paint([[cx - 520, 760], [cx + 520, 760], [cx + 480, 680], [cx - 480, 680]], { wash: '#3A3740', ink: null });
   handText('Olympia', cx, 735, 40, '#C9B98A', { font: FONT.fell, align: 'center', j: 0 });
-  const rows = ['1234567890', 'QWERTZUIOP', 'ASDFGHJKL', 'YXCVBNM'];
-  rows.forEach((r, ri) => [...r].forEach((ch, k) => {
-    const x = cx - (r.length - 1) * 50 + k * 100 + ri * 18, y = 820 + ri * 62;
-    paint(ellPts(x, y, 30, 24, 16), { wash: '#E8E1D0', tex: 0, pool: 0, ink: PAL.ink, sw: .8 });
-    handText(ch, x, y + 8, 22, '#2A2630', { font: FONT.type, align: 'center', j: 0 });
+  for (const k of twKeys()) {
+    if (k.wide) paint(rrPts(k.x - k.rx, k.y - k.ry, 2 * k.rx, 2 * k.ry, k.ry * .9, .6), { wash: '#E8E1D0', tex: 0, pool: 0, ink: PAL.ink, sw: .8 });
+    else paint(ellPts(k.x, k.y, k.rx, k.ry, 18), { wash: '#E8E1D0', tex: 0, pool: 0, ink: PAL.ink, sw: .8 });
+    handText(k.ch, k.x, k.y + k.fs * .36, k.fs, '#2A2630', { font: FONT.type, align: 'center', j: 0 });
+  }
+  if (!PHONE) paint(rrPts(cx - 260, 1060, 520, 40, 18, .6), { wash: '#E8E1D0', ink: PAL.ink, sw: .8 });
+}
+// the keys, where they are drawn: on a phone bigger, with a backspace, a return and a space bar of their own
+function twKeys() {
+  const cx = TWV.cx, P = PHONE, dx = P ? 132 : 100, dy = P ? 74 : 62, y0 = P ? 800 : 820, st = P ? 26 : 18;
+  const rx = P ? 50 : 30, ry = P ? 31 : 24, fs = P ? 34 : 22, out = [];
+  ['1234567890', 'QWERTZUIOP', 'ASDFGHJKL', 'YXCVBNM'].forEach((r, ri) => [...r].forEach((ch, k) => {
+    out.push({ ch, key: ch.toLowerCase(), x: cx - (r.length - 1) * dx / 2 + k * dx + ri * st, y: y0 + ri * dy, rx, ry, fs, w: dx, h: dy });
   }));
-  paint(rrPts(cx - 260, 1060, 520, 40, 18, .6), { wash: '#E8E1D0', ink: PAL.ink, sw: .8 });
+  if (P) {
+    const after = (ri, n, o) => ({ x: cx - (n - 1) * dx / 2 + n * dx + ri * st + (o.rx - rx), y: y0 + ri * dy, ry, fs, h: dy, wide: true, ...o, w: 2 * o.rx + 16 });
+    out.push(after(0, 10, { ch: '⌫', key: 'Backspace', rx: 62 }), after(2, 9, { ch: '⏎', key: 'Enter', rx: 74 }), after(3, 7, { ch: '', key: ' ', rx: 150 }));
+  }
+  return out;
 }
 function focusKeys(on) {
   const k = document.getElementById('keys'); if (!k) return;
+  if (on && TOUCH) { k.blur(); return; }   // with a finger the drawn keys are the keyboard; the phone's own would cover the room
   if (on) { k.value = ''; try { k.focus({ preventScroll: true }); } catch (e) { k.focus(); } } else k.blur();
 }
 
@@ -635,7 +652,7 @@ V.intro = {
       typedText(l.slice(0, n), 420, 340 + i * 74, 40, '#E9E0CC', { seed: i });
     });
     UI.hit({ r: [0, 0, W, H], tip: null, cursor: 'pointer', onClick: () => this.done() });
-    handText('klik om verder te gaan', W - 60, H - 40, 24, 'rgba(230,220,200,.35)', { font: FONT.hand, align: 'right', j: 0 });
+    handText(TOUCH ? 'tik om verder te gaan' : 'klik om verder te gaan', W - 60, H - 40, 24, 'rgba(230,220,200,.35)', { font: FONT.hand, align: 'right', j: 0 });
     if (age > this.lines.length * per + 1.6) this.done();
   },
   done() { if (this.finished) return; this.finished = true; transition('iris', () => { setView('room'); introRoom(); }, { at: [W / 2, H / 2] }); },

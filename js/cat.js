@@ -413,6 +413,5 @@ function setWho(name) {
   WHO = name in WHO_ALL ? name : 'me';
   BODY = WHO_ALL[WHO].cols;
   if (typeof TABLE_RAISE !== 'undefined') TABLE_RAISE = WHO === 'me' ? 96 : 0;
-  if (typeof HELP_LINES !== 'undefined') HELP_LINES[0] = `Klik op iets in de kamer: ${WHO_ALL[WHO].word} loopt erheen.`;
 }
 function assistant(x, y, u, o) { WHO_ALL[WHO].draw(x, y, u, o); }

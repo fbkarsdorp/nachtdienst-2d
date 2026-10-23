@@ -2,6 +2,12 @@
 // the four digits, the hand, the pointer's label, and the transitions between places (an iris, a brush wipe).
 'use strict';
 
+// ---------- a phone: a finger rather than a mouse, and a small screen ----------
+// TOUCH follows the last pointer used; PHONE is a small stage (on a phone in landscape it is about 700 css px wide),
+// where tags are drawn larger, their tap areas taller, and cards read closer.
+let TOUCH = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches, PHONE = false;
+function checkPhone() { const st = document.getElementById('stage'); PHONE = !!st && st.clientWidth > 0 && st.clientWidth < 1000; LAYER_KEEP = PHONE || TOUCH ? 4000 : 30000; }
+const GROW = () => PHONE ? 1.35 : 1;
 const UI = {
   notes: [], tip: null, hover: null, mouse: [-500, -500], hits: [], down: null, cursor: 'default',
   // ---------- hit regions, rebuilt every frame by whatever is drawn ----------
@@ -44,9 +50,10 @@ const UI = {
   },
   // ---------- a paper tag to click ----------
   button(label, x, y, o = {}) {
-    const size = o.size || 30;
+    const g = o.noGrow ? 1 : GROW(), size = (o.size || 30) * g;
     C.font = `600 ${size}px ${FONT.hand}`;
-    const w = o.w || C.measureText(label).width + 56, h = o.h || size * 1.6;
+    const w = o.w ? o.w * g : C.measureText(label).width + 56 * g, h = o.h ? o.h * g : size * 1.6;
+    if (o.left != null) x = o.left + w / 2;
     const hov = this.hover && this.hover.id === (o.id || label) && !o.disabled;
     const lift = hov ? -3 : 0;
     boilSeed('btn' + label);
@@ -56,9 +63,11 @@ const UI = {
     paint([[-w / 2, -h / 2], [w / 2 - 14, -h / 2], [w / 2, -h / 2 + 12], [w / 2, h / 2], [-w / 2, h / 2]].map(([a, b]) => [a + jit(1), b + jit(1)]), { wash: col, ink: PAL.ink, sw: .7, texK: .4 });
     if (!o.noHole) paint(ellPts(w / 2 - 14, -h / 2 + 16, 4, 4, 8), { wash: '#4A4038', tex: 0, pool: 0, ink: null });
     handText(label, 0, size * .34, size, o.disabled ? '#7D7468' : '#2E2838', { font: FONT.hand, weight: 600, align: 'center', j: .3 });
-    if (o.key) handText(o.key, -w / 2 + 10, h / 2 - 8, 15, '#8A7F70', { font: FONT.type, j: 0 });
+    if (o.key && !TOUCH) handText(o.key, -w / 2 + 10, h / 2 - 8, 15, '#8A7F70', { font: FONT.type, j: 0 });
     pop();
-    return this.hit({ id: o.id || label, r: [x - w / 2, y - h / 2, w, h], tip: o.tip, onClick: o.onClick, disabled: o.disabled, cursor: o.disabled ? 'not-allowed' : 'pointer' });
+    // on a phone a tag is tapped, not pointed at: its tap area is at least a fingertip tall (about 44 css px)
+    const pad = PHONE ? Math.max(0, (124 - h) / 2) : 0;
+    return this.hit({ id: o.id || label, r: [x - w / 2 - pad * .25, y - h / 2 - pad, w + pad * .5, h + 2 * pad], tip: o.tip, onClick: o.onClick, disabled: o.disabled, cursor: o.disabled ? 'not-allowed' : 'pointer' });
   },
   // ---------- the pointer's label ----------
   drawTip() {
@@ -162,15 +171,19 @@ function brushWipe(p, cols = ['#2A2030', '#3A2C3E']) {
 }
 
 // ---------- how it works: a card of J.J.V.'s instructions, in pencil ----------
-const HELP_LINES = [
-  'Klik op iets in de kamer: de assistent loopt erheen.',
-  'Bij een kast: pak de envelop van de la die aan de beurt is. Hij gaat mee naar de leestafel.',
-  'Op tafel: maak de envelop open, lees de kaarten (F draait ze om), leg ze neer.',
-  'Wat op de envelop staat, is de opdracht. “Vraag J.J.V.” kost tijd op de klok.',
-  'Een kaart kan mee in de hand, naar een kast, het raam, de deur, de machine.',
-  'Gaat het slot open, dan gaat de envelop dicht: neem hem mee en voeg hem in zijn la in.',
-  'De hand houdt één ding. Esc of de rechterknop: terug.',
-];
+// with a finger it is tapping, not clicking, and there are no keys to press
+const helpLines = () => {
+  const who = typeof WHO_ALL !== 'undefined' ? WHO_ALL[WHO].word : 'de assistent';
+  return [
+    `${TOUCH ? 'Tik' : 'Klik'} op iets in de kamer: ${who} loopt erheen.`,
+    'Bij een kast: pak de envelop van de la die aan de beurt is. Hij gaat mee naar de leestafel.',
+    `Op tafel: maak de envelop open, lees de kaarten (${TOUCH ? '“Omdraaien”' : 'F'} draait ze om), leg ze neer.`,
+    'Wat op de envelop staat, is de opdracht. “Vraag J.J.V.” kost tijd op de klok.',
+    'Een kaart kan mee in de hand, naar een kast, het raam, de deur, de machine.',
+    'Gaat het slot open, dan gaat de envelop dicht: neem hem mee en voeg hem in zijn la in.',
+    TOUCH ? 'De hand houdt één ding. “Terug”, linksboven: terug.' : 'De hand houdt één ding. Esc of de rechterknop: terug.',
+  ];
+};
 const HELP = { on: false, t0: 0 };
 function drawHelp() {
   if (!HELP.on) return;
@@ -186,7 +199,7 @@ function drawHelp() {
   handText('Nachtdienst', -w / 2 + 60, -h / 2 + 96, 58, '#3A3248', { font: FONT.fell, j: 0 });
   handText('— zo gaat het —', -w / 2 + 380, -h / 2 + 96, 34, '#6A6070', { font: FONT.hand, j: 0 });
   let y = -h / 2 + 140;
-  for (const l of HELP_LINES) y += pencilNote(l, -w / 2 + 60, y + 4, w - 120, 34, { rot: 0, col: '#3A3248' }) + 22;
+  for (const l of helpLines()) y += pencilNote(l, -w / 2 + 60, y + 4, w - 120, 34, { rot: 0, col: '#3A3248' }) + 22;
   handText('J.J.V.', w / 2 - 80, h / 2 - 36, 40, '#3A3248', { font: FONT.hand, weight: 600, align: 'right', j: 0 });
   pop();
 }

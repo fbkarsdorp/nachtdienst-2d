@@ -10,6 +10,9 @@
 
 :root { --night: #14111a; --ink: #2b2233; --paper: #f3ebdc; color-scheme: dark; }
 html, body { height: 100%; margin: 0; background: var(--night); overflow: hidden; }
+/* a phone: no bounce, no pull-to-refresh, no callouts or selection on a long press */
+html, body { overscroll-behavior: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-text-size-adjust: 100%; }
+html:fullscreen, html:-webkit-full-screen { background: var(--night); }
 body { display: grid; place-items: center; -webkit-tap-highlight-color: transparent; }
 #stage { position: relative; width: min(100vw, calc(100vh * 16 / 9)); aspect-ratio: 16 / 9; max-width: 100%; }
 @supports (height: 100dvh) { #stage { width: min(100vw, calc(100dvh * 16 / 9)); } }

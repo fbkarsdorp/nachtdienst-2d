@@ -58,9 +58,24 @@ function frame(now) {
 }
 
 // a question mark and the sound, in the corner
+// fullscreen and landscape: Android browsers allow both; an iPhone does neither (added to the home screen it runs
+// without the browser's bars, see index.html)
+let fullTried = false;
+const canFull = () => !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+const isFull = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+function goFull() {
+  if (!canFull() || isFull()) return;
+  const el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
+  try {
+    const p = req.call(el, { navigationUI: 'hide' });
+    const lock = () => { try { const r = screen.orientation && screen.orientation.lock && screen.orientation.lock('landscape'); if (r && r.catch) r.catch(() => {}); } catch (e) { /* not allowed here */ } };
+    if (p && p.then) p.then(lock).catch(() => {}); else lock();
+  } catch (e) { /* not allowed here (an embedded page, say) */ }
+}
 function cornerTags() {
-  UI.button('?', W - 70, 46, { size: 30, w: 64, id: 'help', tip: 'Hoe het werkt (H)', onClick: () => helpToggle(true), noHole: true });
-  UI.button(SND.on ? '♪' : '–', W - 150, 46, { size: 30, w: 64, id: 'sound', tip: SND.on ? 'Geluid uit (M)' : 'Geluid aan (M)', onClick: () => SND.toggle(), noHole: true });
+  if (TOUCH && canFull() && !isFull()) UI.button('⤢', W - 230 - (PHONE ? 50 : 0), 46 + (PHONE ? 12 : 0), { size: 30, w: 64, id: 'full', onClick: goFull, noHole: true });
+  UI.button('?', W - 70, 46 + (PHONE ? 12 : 0), { size: 30, w: 64, id: 'help', tip: 'Hoe het werkt (H)', onClick: () => helpToggle(true), noHole: true });
+  UI.button(SND.on ? '♪' : '–', W - 150 - (PHONE ? 25 : 0), 46 + (PHONE ? 12 : 0), { size: 30, w: 64, id: 'sound', tip: SND.on ? 'Geluid uit (M)' : 'Geluid aan (M)', onClick: () => SND.toggle(), noHole: true });
 }
 
 // a real link over the archive's stamp, so the story's own page opens like any link
@@ -85,6 +100,7 @@ function hover() {
 function onDown(e) {
   SND.resume(); G.lastInput = T;
   const [x, y] = toLogical(e); UI.mouse = [x, y]; UI.touch = e.pointerType === 'touch';
+  if (e.pointerType) TOUCH = e.pointerType !== 'mouse';
   if (e.button === 2) { goBack(); return; }
   const h = UI.find(x, y); UI.down = { h, x, y, t: T };
   if (h && h.drag && h.onDown) { h.onDown(x, y); UI.dragging = h; SCREEN.setPointerCapture && SCREEN.setPointerCapture(e.pointerId); }
@@ -98,6 +114,8 @@ function onUp(e) {
   const d = UI.down; UI.down = null;
   if (UI.dragging) { const h = UI.dragging; UI.dragging = null; if (h.onUp) h.onUp(x, y); return; }
   if (!d || e.button === 2) return;
+  // the first tap on a phone asks for the whole screen, sideways (where the browser allows it)
+  if (e.pointerType === 'touch' && !fullTried) { fullTried = true; goFull(); }
   const h = UI.find(x, y);
   if (h && sameHit(h, d.h) && h.onClick) h.onClick(x, y);
   // a finger leaves no pointer behind: no label hangs about after a tap (the map keeps it, to read the name)
@@ -147,6 +165,7 @@ async function boot() {
   setWho(params.get('who') || 'me');
   const dpr = window.devicePixelRatio || 1, cssW = Math.min(window.innerWidth, window.innerHeight * 16 / 9);
   RS = clamp(Math.round(cssW * dpr / W * 4) / 4, .75, 1.5);
+  if (cssW < 1000 && (TOUCH || dpr > 1.5)) RS = Math.min(RS, 1);   // a phone: sharp enough, and a third of the memory
   if (params.has('rs')) RS = Number(params.get('rs'));
   SCREEN.width = Math.round(W * RS); SCREEN.height = Math.round(H * RS);
   try {
@@ -159,6 +178,9 @@ async function boot() {
   await G.start(defaultSeed(), '', false);
   G.S.fired.introDone = false;
   setView('title');
+  checkPhone(); window.addEventListener('resize', checkPhone);
+  // iOS lets sound start only from the end of a touch
+  for (const ev of ['touchend', 'click']) window.addEventListener(ev, () => SND.resume(), { passive: true });
   SCREEN.addEventListener('pointerdown', onDown); SCREEN.addEventListener('pointermove', onMove); SCREEN.addEventListener('pointerup', onUp); SCREEN.addEventListener('pointerleave', e => { if (!UI.dragging) UI.mouse = [-500, -500]; });
   SCREEN.addEventListener('contextmenu', e => e.preventDefault());
   window.addEventListener('keydown', onKey);

@@ -33,6 +33,16 @@ Use headphones: the room is mostly sound.
   are inserted, the stamped envelope goes onto the spike. That spike is the only progress bar.
 - H shows the instructions again, M turns the sound off.
 
+### On a phone
+
+Hold the phone sideways. Everything is tapped: the room's things, the tags, the drawn keys of the typewriter (which
+has its own backspace, return and space bar on a phone, so the phone's keyboard never covers the room). On a small
+screen the tags are drawn larger with taller tap areas, cards are read closer, and the help speaks of tapping. The
+first tap asks for the whole screen in landscape where the browser allows it (Android); on an iPhone, add the page to
+the home screen (Share → Zet op beginscherm) and it opens without the browser's bars. Sound plays through the silent
+switch. Painted layers not shown for a few seconds give their memory back, which keeps a phone's canvas memory near
+80 MB instead of 300.
+
 ### The puzzles
 
 | | what you do | where |

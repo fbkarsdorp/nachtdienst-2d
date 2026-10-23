@@ -388,6 +388,7 @@ class Layer {
   get(v) { return this.cv[v] || this.render(v); }
   blit(v = BOILN % 3, alpha = 1) {
     // fall back to an already painted drawing while the others are still being made
+    this.used = performance.now();
     let cv = this.cv[v]; if (!cv) cv = this.cv.find(Boolean) || this.render(v);
     if (alpha < 1) C.globalAlpha = alpha;
     C.drawImage(cv, this.x, this.y, this.w, this.h); C.globalAlpha = 1;
@@ -396,10 +397,15 @@ class Layer {
 // paint missing boil drawings in idle time, a few per frame
 const LAYERS = [];
 function layer(x, y, w, h, draw, key) { const L = new Layer(x, y, w, h, draw, key); LAYERS.push(L); return L; }
+// Layers not shown for a while give their drawings back (a phone has little memory for canvases: every view's walls,
+// three times over, come to some 300 MB); they are painted again when next shown, behind the transition.
+let LAYER_KEEP = 30000;
 function warmLayers(budgetMs = 6) {
   const t0 = performance.now();
-  for (const L of LAYERS) for (let v = 0; v < 3; v++) {
-    if (!L.cv[v]) { L.render(v); if (performance.now() - t0 > budgetMs) return false; }
+  for (const L of LAYERS) if (L.used && t0 - L.used > LAYER_KEEP && L.cv.some(Boolean)) L.invalidate();
+  for (const L of LAYERS) {
+    if (L.used && t0 - L.used > LAYER_KEEP) continue;
+    for (let v = 0; v < 3; v++) if (!L.cv[v]) { L.render(v); if (performance.now() - t0 > budgetMs) return false; }
   }
   return true;
 }

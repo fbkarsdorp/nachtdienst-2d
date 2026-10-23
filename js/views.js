@@ -609,7 +609,7 @@ function drawPeek(o = {}) {
   assistant(x, y, u, { ...m, view: 'front', lookX: m.eyes === 'scared' ? m.lookX : lookX, lookY: m.eyes === 'scared' ? 0 : lookY, noShadow: true, boilKey: 'peek', frame: 'peek', aL: (m.aL || 0) + .4, aR: (m.aR || 0) + .4 });
   if (G.S.hand) drawHand(G, x > W / 2 ? x - 360 : x + 360, H - 150);
 }
-function backButton(fn) { UI.button('← Terug', 96, 46, { size: 28, onClick: fn, key: 'Esc', rot: -.02 }); V.back = fn; }
+function backButton(fn) { UI.button('← Terug', 0, PHONE ? 58 : 46, { left: 30, size: 28, onClick: fn, key: 'Esc', rot: -.02 }); V.back = fn; }
 
 // ---------- the reader: one card lifted to be read ----------
 const Reader = {
@@ -620,7 +620,7 @@ const Reader = {
     UI.hit({ r: [0, 0, W, H], tip: null, cursor: 'default', onClick: () => {} });
     const age = T - R.t0, k = backOut(clamp(age / .35)), fk = clamp((T - R.flipT) / .36);
     const sx = fk < 1 ? Math.abs(Math.cos(fk * Math.PI)) : 1, back = fk < .5 ? !R.back : R.back;
-    const w = 1120, h = w * cardAspect(card), x = W / 2 - w / 2, y = 70 + (672 - h) / 2 + (1 - k) * 80;
+    const w = PHONE ? 1480 : 1120, h = w * cardAspect(card), x = W / 2 - w / 2, y = (PHONE ? 24 + (930 - h) / 2 : 70 + (672 - h) / 2) + (1 - k) * 80;
     C.globalAlpha = clamp(age / .2);
     drawCard(card, x, y, w, { back, sx, rot: -.008 });
     C.globalAlpha = 1;
@@ -640,10 +640,10 @@ const Reader = {
     if (from === 'five') b.push(['Naar de schrijfmachine', () => { G.closeReader(); openView('typewriter', null, [W / 2, H / 2]); }]);
     b.push(['Terug', () => G.closeReader(), 'Esc']);
     C.font = `600 32px ${FONT.hand}`;
-    const widths = b.map(([l]) => C.measureText(l).width + 70), gap = 44, total = widths.reduce((s, w2) => s + w2 + gap, -gap);
+    const g = GROW(), widths = b.map(([l]) => C.measureText(l).width + 70), gap = 44, total = widths.reduce((s, w2) => s + w2 * g + gap, -gap), by = PHONE ? 1010 : 834;
     let bx = W / 2 - total / 2;
-    b.forEach(([label, fn, kb], i) => { const bw = widths[i]; UI.button(label, bx + bw / 2, 834, { size: 32, onClick: fn, w: bw }); if (kb) handText(kb, bx + bw / 2, 892, 18, 'rgba(240,230,210,.45)', { font: FONT.type, align: 'center', j: 0 }); bx += bw + gap; });
-    if (R.list.length > 1) handText(`${R.i + 1} / ${R.list.length}`, W / 2, y - 24, 26, 'rgba(240,230,210,.7)', { font: FONT.hand, align: 'center', j: 0 });
+    b.forEach(([label, fn, kb], i) => { const bw = widths[i] * g; UI.button(label, bx + bw / 2, by, { size: 32, onClick: fn, w: widths[i] }); if (kb && !TOUCH) handText(kb, bx + bw / 2, 892, 18, 'rgba(240,230,210,.45)', { font: FONT.type, align: 'center', j: 0 }); bx += bw + gap; });
+    if (R.list.length > 1) handText(`${R.i + 1} / ${R.list.length}`, PHONE ? x + w + 70 : W / 2, PHONE ? y + h / 2 + 90 : y - 24, 26, 'rgba(240,230,210,.7)', { font: FONT.hand, align: 'center', j: 0 });
     if (back && !(card.r && card.r.original) && card.kind !== 'note') handText('(achterkant)', x + 40, y + 50, 24, '#8A7F92', { font: FONT.hand, j: 0 });
   },
   step(d) { const R = G.reader; R.i = (R.i + d + R.list.length) % R.list.length; R.back = false; R.flipT = -9; R.t0 = T - .25; G.markRead(R.list[R.i]); SND.card(); },
