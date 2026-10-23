@@ -122,6 +122,7 @@ js/views2.js       the map, typewriter, clock, window, door, cabinet V, halves, 
 js/night.js        the director: leaks, room locks waking, enactments, reactions
 js/feast.js        the real calendar outside: tonight's moon, and a few nights of the year (no spoilers)
 js/dev.js          a back door for testing (below)
+js/admin.js        the admin panel on top of it (?admin)
 js/touch.js        the phone: fingertip reach, tap marks, swipes, back button, sideways, wake lock, vibration
 js/main.js         boot, the frame loop, pointer and keys
 data/              nights, map geometry, gazetteer, archive (converted from the original's game/data)
@@ -134,6 +135,10 @@ fonts/, sounds/    Special Elite, Caveat, Homemade Apple, IM Fell English; card 
 - `?rs=1.5` forces the render scale (it otherwise follows the screen, between 0.75 and 1.5).
 - Progress is saved in `localStorage`; the title offers to resume.
 - From the console: `DEV.take('2-1')`, `DEV.solve('2-1')`, `DEV.file('2-1')`, `DEV.cabinet(2)`, `DEV.go('map')`.
+- `?admin` shows a ⚙ in the corner (it stays for that browser; `?admin=0` takes it away). Its panel picks a night
+  and a date, plays, solves or files any drawer (filing what stands before it), files whole cabinets, skips the scenes
+  between them, opens cabinet V, runs either ending, goes to any place in the room and sets the hour. Each drawer
+  shows its last hint, which mostly gives the answer away.
 
 Word and number answers are only in the bundles as salted SHA-256 hashes, as in the original; the game hashes what is
 typed or dialled and compares.

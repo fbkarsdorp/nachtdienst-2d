@@ -40,3 +40,21 @@ html.sideways #stage { position: fixed; left: 50%; top: 50%; width: min(100vh, c
 @supports (height: 100dvh) { html.sideways #stage { width: min(100dvh, calc(100vw * 16 / 9)); } }
 html.sideways #turn { display: none; }
 html, body { touch-action: none; }
+
+/* the admin panel (js/admin.js, ?admin): plain, out of the way, scrollable by touch */
+#adminbtn { position: fixed; left: max(4px, env(safe-area-inset-left, 0px)); top: max(4px, env(safe-area-inset-top, 0px)); z-index: 20; width: 34px; height: 34px; border: 0; border-radius: 8px; background: rgba(243, 235, 220, .14); color: var(--paper); font: 20px/34px system-ui, sans-serif; cursor: pointer; padding: 0; }
+#admin { position: fixed; top: 0; right: 0; bottom: 0; z-index: 21; width: min(440px, 94vw); overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y; overscroll-behavior: contain;
+  background: rgba(24, 20, 30, .96); color: var(--paper); font: 15px/1.35 system-ui, sans-serif; padding: 0 14px 40px; box-sizing: border-box; box-shadow: -6px 0 24px rgba(0, 0, 0, .5); -webkit-user-select: none; user-select: none; }
+#admin header { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 6px; padding: 12px 0 10px; background: #18141e; border-bottom: 1px solid rgba(243, 235, 220, .15); }
+#admin header span { flex: 1; opacity: .75; font-size: 13px; }
+#admin h3 { margin: 16px 0 6px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; opacity: .6; }
+#admin .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0; }
+#admin button, #admin select { font: inherit; font-size: 14px; color: var(--paper); background: #3a3248; border: 1px solid rgba(243, 235, 220, .2); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+#admin button:active { background: #54486a; }
+#admin header button { padding: 2px 12px; font-size: 20px; }
+#admin .cab { margin: 14px 0 4px; display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; }
+#admin .drawer { margin: 6px 0 6px 10px; padding: 6px 8px; border-left: 3px solid rgba(243, 235, 220, .2); }
+#admin .drawer.cur { border-left-color: #e8aa38; }
+#admin .drawer.done { opacity: .5; }
+#admin .dim { opacity: .65; }
+#admin .small { font-size: 12.5px; }
