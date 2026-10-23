@@ -230,7 +230,7 @@ V.typewriter = {
     if (pur.kind === 'five') {
       const r = G.typeWord(word);
       if (r.ok) { SND.ding(); setTimeout(() => endingFive(), 900); }
-      else { G.say(G.F.nee); this.paper.push({ txt: 'xxxxxxx', col: '#7A6F86' }); }
+      else { G.say(r.nudge || G.F.nee, r.nudge ? { other: true } : undefined); this.paper.push({ txt: 'xxxxxxx', col: '#7A6F86' }); }
       return;
     }
     if (pur.kind === 'P1' || pur.kind === 'P5') {

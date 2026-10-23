@@ -8,6 +8,11 @@ const SAVE_KEY = 'nachtdienst-2d';
 const LEAK_STEP = 180;          // seconds per step of a leak
 const HINT_COST = [2, 4, 8];    // minutes on the clock
 
+// the last card's blank: what more it takes, the invitation on it, and the nudges after a word that does not go in
+const FIVE_WORDS = ['ik', 'mezelf', 'jezelf', 'zichzelf', 'hemzelf', 'haarzelf', 'jou', 'jij', 'hem', 'haar', 'niemand', 'nieuwe assistent',
+  'spiegel', 'spiegelbeeld', 'zijn spiegelbeeld', 'haar spiegelbeeld', 'mijn spiegelbeeld', 'zichzelf in het glas', 'verzamelaar', 'j.j.v.', 'jjv'];
+const FIVE_INVITE = 'vul het zelf in. aan de machine';
+const FIVE_NUDGES = ['Wat zag de assistent daar?', 'Wie zat hier vannacht?', 'Wie leest dit nu?'];
 const G = {
   B: null, S: null, F: null, view: 'title', arg: null, reader: null, busy: false, events: [],
   clawd: { x: 300, tx: 300, y: WALK_Y, face: 'front', walking: false, walkT0: 0, x0: 300, then: null, mood: new Mood('neutral'), look: null, turnT: 0, prevFace: 'front' },
@@ -131,7 +136,8 @@ const G = {
     }
     if (key === 'five') {
       const r = { ...this.F.card_five }, fill = this.S.fiveWord ? { blank: this.S.fiveWord } : null;
-      return { key: 'five', kind: 'five', r, fill, dateText: this.tomorrow(), ver: this.S.fiveWord || '' };
+      const notes = this.S.fiveWord ? [] : [{ txt: FIVE_INVITE, other: true }];
+      return { key: 'five', kind: 'five', r, fill, notes, dateText: this.tomorrow(), ver: this.S.fiveWord || '' };
     }
     if (key.startsWith('arch:')) {
       const [, n, i] = key.split(':'), a = ARCHIVE[n] && ARCHIVE[n][i];
@@ -492,11 +498,16 @@ const G = {
     this.clawd.mood.act('confused', 1.2);
     return { ok: false };
   },
+  // the blank is the player's to fill: the likely words go in at once, anything else after a few nudges
   typeFive(word) {
-    const n = normalize(word), name = normalize(this.S.name || ''), list = this.F.final_words.map(normalize).concat(this.S.typed.map(normalize));
+    const n = normalize(word), name = normalize(this.S.name || '');
+    const list = [...this.F.final_words, ...FIVE_WORDS, ...this.S.typed].map(normalize);
     if (name) list.push(name);
-    if (n && list.includes(n)) { this.S.fiveWord = word.trim(); this.S.five = 'typed'; this.save(); return { ok: true, five: true }; }
-    return { ok: false };
+    if (!n) return { ok: false };
+    const miss = this.S.fiveMiss || 0;
+    if (list.includes(n) || miss >= FIVE_NUDGES.length) { this.S.fiveWord = word.trim(); this.S.five = 'typed'; this.save(); return { ok: true, five: true }; }
+    this.S.fiveMiss = miss + 1; this.save();
+    return { ok: false, nudge: FIVE_NUDGES[miss] };
   },
   setClock(hour) {
     const R = this.cab(1).drawers[2];
