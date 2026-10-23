@@ -75,7 +75,8 @@ flatten, the tail goes up, hooks into a question mark or wraps round the paws, t
 round. It sits when it stops, trots when it walks, carries cards in its mouth, hops onto the reading table, arches its
 back at a knock, purrs when left alone and curls up asleep after a while.
 
-The person on duty by default (`js/person.js`) is built the same way, in centimetres and at true scale against the
+The person on duty by default (`js/person.js`) is built the same way, its colours sampled from the portrait and its
+outlines (as in the portrait) a deeper shade of each part's own colour rather than black, in centimetres and at true scale against the
 door and the cabinets: an oversized T-shirt with dropped shoulders over tattooed forearms (little motifs in fine line:
 a face, a snake, a skull, a swallow), wide jeans with deep turned-up cuffs and cream socks, heavy laced shoes with
 yellow welt stitching; a head with round glasses, heavy-lidded grey eyes that drift sideways, a moustache, freckles, and

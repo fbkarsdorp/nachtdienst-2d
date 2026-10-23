@@ -155,7 +155,9 @@ const INK_PX = 3.4;   // stroke width in px for sw = 1
 // start and end overlapping a little, the way a brush goes round and lifts.
 function brushStroke(P, sw, col, alpha = .93, o = {}) {
   if (P.length < 2) return;
-  const step = Math.max(1.6, sw * INK_PX * .9);
+  // the step is in local units: under a scale-up (a figure drawn in centimetres) keep it about 1.6 px on screen
+  const m = C.getTransform(), zoom = Math.hypot(m.a, m.b) / RS;
+  const step = Math.max(1.6 / Math.max(1, zoom), sw * INK_PX * .9);
   let Q = resample(P, step, o.closed);
   if (o.closed && Q.length > 4) { const over = Math.max(2, Math.round(Q.length * .04)); Q = Q.concat(Q.slice(1, over)); }
   const n = Q.length; if (n < 2) return;
