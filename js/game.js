@@ -14,6 +14,14 @@ const FIVE_ENDING = [', en wat de assistent daar zag, dat was ____.', '. Op de b
 const FIVE_WORDS = ['assistent', 'nieuwe assistent', 'vorige assistent', 'mij', 'mijzelf', 'ik', 'mijn naam', 'jij', 'jou'];
 const FIVE_INVITE = 'vul het zelf in. aan de machine';
 const FIVE_NUDGES = ['Wie zat hier vannacht?', 'Wiens kaart is dit?', 'Je eigen naam.'];
+// under it, the assistants before: the same story, each with its own name, yellower the further back. Told by J.J.V., every one.
+const FIVE_BEFORE = [
+  { name: 'W. de Graaf', date: '14-11-1971', tone: '#ECDDB8' },
+  { name: 'A. Mulder', date: '2-3-1958', tone: '#E4D2A6' },
+  { name: 'H. Brands', date: '27-9-1946', tone: '#DAC493' },
+  { name: 'J. Pieters', date: '19-1-1932', tone: '#CFB582' },
+];
+const FIVE_FILED = 'Opgeborgen. — J.J.V.', FIVE_FINAL = 'Opgeborgen. Bij de anderen. — J.J.V.';
 const G = {
   B: null, S: null, F: null, view: 'title', arg: null, reader: null, busy: false, events: [],
   clawd: { x: 300, tx: 300, y: WALK_Y, face: 'front', walking: false, walkT0: 0, x0: 300, then: null, mood: new Mood('neutral'), look: null, turnT: 0, prevFace: 'front' },
@@ -44,6 +52,7 @@ const G = {
     this.B = await loadNight(seed);
     this.F = this.B.frame;
     this.F.card_five = { ...this.F.card_five, description: this.F.card_five.description.replace(...FIVE_ENDING) };
+    this.F.note_final = FIVE_FINAL;
     let S = null;
     if (resume) { try { S = JSON.parse(localStorage.getItem(SAVE_KEY)); } catch (e) { S = null; } }
     this.S = S && S.seed === seed ? S : this.newState(seed, name);
@@ -140,6 +149,10 @@ const G = {
       const r = { ...this.F.card_five }, fill = this.S.fiveWord ? { blank: this.S.fiveWord } : null;
       const notes = this.S.fiveWord ? [] : [{ txt: FIVE_INVITE, other: true }];
       return { key: 'five', kind: 'five', r, fill, notes, dateText: this.tomorrow(), ver: this.S.fiveWord || '' };
+    }
+    if (key.startsWith('before:')) {
+      const o = FIVE_BEFORE[Number(key.slice(7))];
+      return { key, kind: 'five', r: { ...this.F.card_five }, fill: { blank: o.name }, dateText: o.date, tone: o.tone, notes: [{ txt: FIVE_FILED }], ver: '' };
     }
     if (key.startsWith('arch:')) {
       const [, n, i] = key.split(':'), a = ARCHIVE[n] && ARCHIVE[n][i];

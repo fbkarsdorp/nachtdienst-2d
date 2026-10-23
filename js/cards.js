@@ -83,7 +83,7 @@ function paintCardFront(card) {
   const r = card.r, key = card.key;
   if (card.kind === 'note') return paintNoteCard(card);
   const half = r.half, fused = card.fusedWith;
-  cardPaper(key, { grey: card.grey, bottomHalf: half === 'bottom' && !fused });
+  cardPaper(key, { grey: card.grey, tone: card.tone, bottomHalf: half === 'bottom' && !fused });
   // header: place (province), year; code in red pencil
   const place = card.fill && card.fill.place ? card.fill.place : r.place, filledPlace = card.fill && card.fill.place;
   if (half !== 'bottom') {

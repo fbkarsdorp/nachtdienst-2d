@@ -501,9 +501,12 @@ V.dial = {
       boilSeed('varia');
       paint(rectPts(CABV.x + 160, 640 + (1 - dk) * 40, CABV.w - 320, 300, 1), { wash: '#5A3A30', ink: PAL.ink, sw: 1 });
       handText('VARIA', CABV.x + CABV.w / 2, 690, 34, '#E9DCC0', { font: FONT.fellSC, align: 'center', j: 0 });
-      drawCard(G.cardView('five'), CABV.x + 210, 720, 380, { rot: -.03 });
-      const last = S.intruderIn[5]; if (last) drawCard(G.cardView(last), CABV.x + 300, 760, 300, { rot: .08 });
-      UI.hit({ r: [CABV.x + 200, 700, 520, 280], tip: 'Lezen', onClick: () => { G.S.five = S.five === 'open' ? 'reading' : S.five; G.read(['five'], 0, 'five'); } });
+      // the last misfiled card at the bottom; on it the ones before, fanned out to the right so each date shows, the
+      // oldest deepest; on top the one with the blank
+      const last = S.intruderIn[5]; if (last) drawCard(G.cardView(last), CABV.x + 166, 790, 260, { rot: -.09 });
+      for (let i = FIVE_BEFORE.length - 1; i >= 0; i--) drawCard(G.cardView('before:' + i), CABV.x + 175 + 34 * (i + 1), 726 - 10 * (i + 1), 330, { rot: -.025 + .012 * (i + 1) });
+      drawCard(G.cardView('five'), CABV.x + 175, 728, 330, { rot: -.03 });
+      UI.hit({ r: [CABV.x + 160, 680, CABV.w - 320, 280], tip: 'Lezen', onClick: () => { G.S.five = S.five === 'open' ? 'reading' : S.five; G.read(['five', ...FIVE_BEFORE.map((o, i) => 'before:' + i)], 0, 'five'); } });
     }
     nightGrade(700, 1000, 1);
     if (G.events.some(e => e.kind === 'trailShow')) drawTrailShow();
@@ -729,7 +732,7 @@ V.final = {
   },
 };
 function drawOwnBack(x, y, w) {
-  const S = G.S, h = w * .6, keys = S.read.filter(k => k !== 'note');
+  const S = G.S, h = w * .6, keys = S.read.filter(k => k !== 'note' && k !== 'five' && !k.startsWith('before:'));
   boilSeed('ownback');
   C.drawImage(paperSheet(w, h, '#F3EAD3', 5, .5), x, y, w, h);
   const total = ARCHIVE_INDEX.total, n = keys.length;
