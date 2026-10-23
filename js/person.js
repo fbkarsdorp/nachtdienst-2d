@@ -344,7 +344,10 @@ function person(x, y, u, o = {}) {
     // the sleeve: joined to the shirt (only its hem to draw) or over the body
     rs('sleeve' + A.sg);
     const te = edge(ME.tee);
-    if (A.beside && A.sleeve) { const n = A.sleeve.length / 2; inkLine([A.sleeve[n - 1], A.sleeve[n]], sw * .9 * S1, te, 'ink', 0); }
+    if (A.beside && A.sleeve) {   // the sleeve's outline belongs to the shirt; its cloth goes back over the arm
+      paint(A.sleeve, { wash: ME.tee, tex: 0, pool: 0, ink: null }); grainIn([A.sleeve], .3);
+      const n = A.sleeve.length / 2; inkLine([A.sleeve[n - 1], A.sleeve[n]], sw * .9 * S1, te, 'ink', 0);
+    }
     else if (Math.abs(pr.c) > .55) {   // across the chest: the sleeve comes out of the shoulder, which is the shirt's
       const sl = meSleeve(A); paint(sl, { wash: ME.tee, tex: 0, pool: 0, ink: null }); openInk(sl, .3, sw, te);
     } else {   // seen from the side: shoulder and sleeve as one piece of cloth, edged where it lies on the shirt
