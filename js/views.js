@@ -574,7 +574,8 @@ function drawTray() {
     if (lab.year) handText(String(lab.year), x + 12, y + 80, 18, '#4A4450', { font: FONT.type, j: 0 });
     if (lab.code) handText(lab.code, x + 12, y + 104, 20, PAL.red, { font: FONT.hand, weight: 600, j: 0 });
     if (G.S.read.includes(k)) inkLine([[x + 196, y + 40], [x + 202, y + 46], [x + 212, y + 32]], .5, '#4A4250', 'inkfine', 0);
-    UI.hit({ r: [x, y, Math.min(step, 220), 190], tip: lab.place, onClick: () => G.read(keys, i, 'tray') });
+    // the card lifts under the pointer, but where it can be taken stays put (a finger has no hover: it lifts mid-tap)
+    UI.hit({ id: 'tray:' + k, r: [x, ty - 30, Math.min(step, 220), 220], tip: lab.place, onClick: () => G.read(keys, i, 'tray') });
   });
   paint(rectPts(tx - 10, ty + 120, tw + 20, th - 50, 1), { wash: PAL.oak, ink: PAL.ink, sw: .9 });
   paint(rectPts(tx + tw / 2 - 40, ty + 150, 80, 30, .4), { wash: PAL.brass, tex: 0, ink: PAL.ink, sw: .5 });
