@@ -158,7 +158,8 @@ copy, made by `python3 tools/english.py` from the Dutch ones:
 - The cards show the English summary on the front and the original telling on the back, with its dialect named.
 - What a puzzle needs beyond a translation is in `tools/en/puzzles.json`, by hand: the English answers of the typed
   locks (matched to the Dutch ones by their hashes), the English of the word two torn halves share, and where an
-  English card tears when the Dutch tears in mid-sentence. Notes, hints and the frame are templates in the script.
+  English card tears when the Dutch tears in mid-sentence; and a few fixes to a translation, where it lost the word a
+  puzzle turns on. Notes, hints and the frame are templates in the script.
 - The script checks that each answer is on its cards in English, that a shared word is on both halves (and on no other
   half in the box), and that a stained number is on its card; a night with a drawer that fails is not written.
 

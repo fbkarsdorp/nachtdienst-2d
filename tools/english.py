@@ -194,8 +194,10 @@ def lang_en(s):
 
 
 def word_in(word, text):
-    """Is this word (or its plural) in the text, as a word?"""
+    """Is this word (or its plural, men for man too) in the text, as a word?"""
     w = re.escape(word.lower())
+    if w.endswith('man'):
+        w = f'(?:{w}|{w[:-3]}men)'
     return re.search(rf"(?<![a-z]){w}(s|es)?(?![a-z])", text.lower()) is not None
 
 

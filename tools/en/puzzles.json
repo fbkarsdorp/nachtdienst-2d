@@ -343,7 +343,12 @@
  "cue_fix": {
   "30422:voerman": "driver",
   "30422:wagen": "wagon",
-  "16498:man": "men"
+  "16498:man": "men",
+  "46305:kist": "coffin",
+  "209576:huis": "Bart",
+  "19772:vrouw": "wife",
+  "16829:kist": "coffin",
+  "43455:kerk": "priest"
  },
  "halves": {
   "19734:143": "and it does happen.",
@@ -384,7 +389,24 @@
   "38979:280": "told him to beforehand",
   "30422:440": "clock strikes two, the wagon",
   "13413:130": "of the road or into the verge",
-  "16083:242": "their two half-year-old children"
+  "16083:242": "their two half-year-old children",
+  "43321:66": "follows the same route",
+  "46448:139": "him not to cross",
+  "8760:139": "sees four card players",
+  "43423:135": "and his farmhands discover",
+  "38983:271": "In the morning the treasure",
+  "35900:83": "They clearly saw",
+  "42795:135": "The next day they heard",
+  "34676:122": "rid him of it",
+  "38984:78": "The man lies down",
+  "42080:402": "She answers that she",
+  "72618:121": "that someone had to step aside"
  },
- "fixes": {}
+ "fixes": {
+  "13314": "The wife of the town hall caretaker dies. When the housemaid goes down to the cellar to work the butter, she sees the dead woman standing by the butter tub. She tells an older maid, but she does not believe her. One day the two maids both see the apparition of their late mistress. They call the caretaker. The moment the caretaker comes to look in the cellar, the apparition has vanished again. The butter that was to be worked is completely ruined; it has turned to something like mud.",
+  "35060": "A youth is a werewolf. When he is walking with his girl, he feels that he is about to change. He sends her on ahead and warns her about a big dog. She must throw her handkerchief to it, and then the girl can flee. Later, however, she and her family see the pieces of handkerchief between the youth's teeth. Werewolves always wear a band around their waist. The farmer the youth works for burns the band. The werewolf still tries to get into the fire, but he is held back. When the band has burned, the youth is an ordinary person again.",
+  "27267": "The seventh son or daughter in a row is a werewolf or she-werewolf respectively. A werewolf must now and then shout something out or stab someone to death; he is untrustworthy. A she-werewolf hates the male sex. Both can enter the house through any little hole in the wall.",
+  "13255": "Some farmers see a white figure standing against a tree in the evening. They are badly frightened because they think it is the ill-omened figure of a wit wief (white lady). Later they see that the figure is not a wit wief but a white goat standing with its legs against the tree, eating the leaves.",
+  "36136": "One evening the narrator's man and his cousin had been to the inn 'De laatste Stuver'. When they were standing on a bridge, they saw an animal coming across the meadow. The animal was pitch black and as big as a cow. It had the shape of a dog. The beast looked at the two men. They became so frightened that they quickly ran off."
+ }
 }
