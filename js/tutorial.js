@@ -68,11 +68,11 @@ const TUT = {
     }
     if (d.type === 'P3') {
       if (h && h.kind === 'card' && h.key.startsWith(id + '/')) {
-        if (inCab) return { txt: tr('Hoort je kaart bij {label}? Dan “In deze kast”. Zo niet: terug, en een andere kast.', { label: CAB_LABEL[inCab] }) + stuck, hit: 'In deze kast' };
-        const txt = tr('Breng hem naar zijn eigen kast. Elke kast heeft een onderwerp: {list}. Waar gaat je kaart over?', { list: CAB_LABEL.slice(1, 5).join(', ') }) + stuck;
+        if (inCab) return { txt: tr('Staat het rode nummer van je kaart op de laden van deze kast? Dan “In deze kast”. Zo niet: terug, en een andere kast.') + stuck, hit: 'In deze kast' };
+        const txt = tr('Breng hem naar zijn eigen kast. Elke kast heeft een onderwerp ({list}) en zijn eigen nummers, op de laden. Welke kast heeft het rode nummer van je kaart?', { list: CAB_LABEL.slice(1, 5).join(', ') }) + stuck;
         return v === 'room' ? { txt } : back(txt);
       }
-      return atTable ? { txt: tr('Drie kaarten horen bij elkaar, één niet: die gaat over iets anders. Lees ze alle vier, en kies bij die ene “Meenemen”.') + stuck, ring: TUT.TRAY } : toTable(tr('De kaarten liggen op de leestafel. Eén hoort in een andere kast.'));
+      return atTable ? { txt: tr('Drie kaarten horen bij elkaar, één niet. Kijk naar de rode nummers: welke wijkt af? Lees ze ook, en kies bij die ene “Meenemen”.') + stuck, ring: TUT.TRAY } : toTable(tr('De kaarten liggen op de leestafel. Eén hoort in een andere kast.'));
     }
     if (d.type === 'R1') {
       if (v === 'clock') return { txt: tr('Sleep de kleine wijzer naar het uur, of {klik} op het uur. Laat los en wacht twee tellen.', { klik }) + stuck };

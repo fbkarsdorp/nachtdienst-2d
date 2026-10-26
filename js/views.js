@@ -715,7 +715,7 @@ V.cabinet = {
     // a card in the hand can be given to the whole cabinet
     if (S.hand && S.hand.kind === 'card') {
       C.save(); C.globalAlpha = .35 + .2 * Math.sin(T * 4); C.strokeStyle = '#FFE6A8'; C.lineWidth = 5; C.setLineDash([16, 12]); C.strokeRect(CABV.x - 14, CABV.y - 90, CABV.w + 28, CABV.h + 100); C.restore();
-      UI.button('In deze kast', CABV.x + CABV.w / 2, CABV.y - 116, { size: 30, onClick: () => G.offerCabinet(n) });
+      UI.button('In deze kast', CABV.x + CABV.w, CABV.y - 116, { size: 30, onClick: () => G.offerCabinet(n) });   // (beside the hour strip, not under it)
     }
     if (V.drawerOpen) V.drawerOpen.draw();
     else if (G.events.some(e => e.kind === 'trailShow')) drawTrailShow();
