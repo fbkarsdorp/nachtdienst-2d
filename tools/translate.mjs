@@ -4,6 +4,8 @@
 //
 //   node tools/translate.mjs submit    send a batch for every untranslated summary (prints its id)
 //   node tools/translate.mjs collect   wait for the batch, store data/translations/nachtdienst.opus.json, show the cost
+//   node tools/translate.mjs direct    the same requests one by one instead, when a batch will not start (twice the price)
+//   node tools/translate.mjs cancel    cancel the batch submitted last
 //   node tools/translate.mjs missing   count what is still untranslated
 //
 // The key is read from ANTHROPIC_API_KEY, or from a line ANTHROPIC_API_KEY=... in .env.local here or in ../sagenland.
@@ -94,7 +96,8 @@ const todo = () => {
   return stories().filter((s) => !(s.id in done));
 };
 
-async function submit() {
+// the requests for what is still untranslated, CHUNK summaries each
+function requests_() {
   const items = todo();
   const requests = [];
   for (let i = 0; i < items.length; i += CHUNK)
@@ -113,6 +116,11 @@ async function submit() {
         ],
       },
     });
+  return { items, requests };
+}
+
+async function submit() {
+  const { items, requests } = requests_();
   if (!requests.length) return console.log('nothing left to translate');
   const batch = await (await api('messages/batches', { method: 'POST', body: JSON.stringify({ requests }) })).json();
   fs.writeFileSync(BATCH, JSON.stringify({ id: batch.id }, null, 1));
@@ -159,8 +167,49 @@ async function collect() {
   console.log(`${todo().length} still untranslated`);
 }
 
+// the same requests one by one, a few at a time, when a batch will not start (at twice the batch price); each answer
+// is stored as it comes, so a run that stops is taken up again by the next
+async function direct(parallel = 4) {
+  const { items, requests } = requests_();
+  if (!requests.length) return console.log('nothing left to translate');
+  console.log(`${items.length} summaries in ${requests.length} requests`);
+  const results = readJson(RESULT, {}), usage = { input: 0, output: 0 }, failed = [];
+  let next = 0, done = 0;
+  const ids = new Set(items.map((s) => s.id));
+  async function worker() {
+    while (next < requests.length) {
+      const r = requests[next++];
+      try {
+        const msg = await (await api('messages', { method: 'POST', body: JSON.stringify(r.params) })).json();
+        usage.input += msg.usage.input_tokens;
+        usage.output += msg.usage.output_tokens;
+        const text = msg.content.find((b) => b.type === 'text');
+        if (msg.stop_reason !== 'end_turn' || !text) throw new Error(msg.stop_reason);
+        for (const t of JSON.parse(text.text).translations) if (ids.has(t.id)) results[t.id] = t.en.trim();
+        fs.writeFileSync(RESULT, JSON.stringify(results, null, 1));
+      } catch (e) {
+        failed.push(`${r.custom_id} (${e.message.slice(0, 80)})`);
+      }
+      console.log(`${++done}/${requests.length}`);
+    }
+  }
+  await Promise.all(Array.from({ length: parallel }, worker));
+  const cost = (usage.input * MODEL.input + usage.output * MODEL.output) * 2 / 1e6;
+  console.log(`${usage.input} in, ${usage.output} out, $${cost.toFixed(2)}`);
+  if (failed.length) console.log(`failed: ${failed.join(', ')}; run direct again to retry`);
+  console.log(`${todo().length} still untranslated`);
+}
+
+async function cancel() {
+  const { id } = readJson(BATCH, {});
+  const b = await (await api(`messages/batches/${id}/cancel`, { method: 'POST' })).json();
+  console.log(id, b.processing_status);
+}
+
 const cmd = process.argv[2];
 if (cmd === 'submit') await submit();
+else if (cmd === 'direct') await direct();
+else if (cmd === 'cancel') await cancel();
 else if (cmd === 'collect') await collect();
 else if (cmd === 'missing') console.log(`${todo().length} of ${stories().length} untranslated`);
-else console.log('usage: node tools/translate.mjs submit|collect|missing');
+else console.log('usage: node tools/translate.mjs submit|collect|direct|cancel|missing');
