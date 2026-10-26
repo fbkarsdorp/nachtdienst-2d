@@ -39,7 +39,7 @@ function tapMark(x, y, h) {
   TAPS.push({ x, y, t: T });
   if (TAPS.length > 6) TAPS.shift();
   const tip = h && h.tip && (typeof h.tip === 'function' ? h.tip() : h.tip);
-  UI.flash = tip ? { txt: tip, x, y, t: T } : null;
+  UI.flash = tip ? { txt: tr(tip), x, y, t: T } : null;
 }
 function drawTaps() {
   for (const p of TAPS) {

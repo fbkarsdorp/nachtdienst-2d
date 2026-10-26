@@ -15,7 +15,7 @@ const DEV = {
     if (d.type === 'R2') { const key = `${id}/${d.lock.card}`; G.S.damp[key] = true; }
     if (d.type === 'R3') { G.setLoc(`${id}/${d.lock.card}`, 'gone'); }
     if (d.type === 'R4') { G.setLoc(`${id}/${d.lock.bottom_card}`, 'env'); }
-    if (d.type === 'P1' || d.type === 'P5') G.S.lastTyped = '(opgelost)';
+    if (d.type === 'P1' || d.type === 'P5') G.S.lastTyped = tr('(opgelost)');
     for (const k of G.keysOf(id)) if (G.where(k).startsWith('found')) G.setLoc(k, 'env');
     G.solve(id);
   },

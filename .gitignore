@@ -1,3 +1,7 @@
 .DS_Store
 # the portrait the person is drawn after: the illustrator's artwork, kept out of the history
 art/
+
+# the raw translations from the API (tools/translate.mjs, and sagenland's); the English data is made from them
+data/translations/
+__pycache__/

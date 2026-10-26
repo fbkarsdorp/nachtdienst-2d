@@ -92,12 +92,12 @@ function paintCardFront(card) {
       if (r.prov) typedText(`(${r.prov})`, 48 + typedWidth(place.slice(0, 34), 34), 80, 24, '#4A4450', { seed: 2 });
       if (filledPlace) { C.save(); C.globalAlpha = .9; pencilLine([[36, 92], [44 + typedWidth(place, 34), 92]], 1.2, '#3a3540'); C.restore(); }
     } else if (!r.summary && card.kind !== 'five') {
-      typedText('— — —', 40, 80, 34, '#26222B'); handText('plaats?', 228, 76, 28, '#7A6F86', { font: FONT.hand, rot: -.06, j: 0 });
+      typedText('— — —', 40, 80, 34, '#26222B'); handText(tr('plaats?'), 228, 76, 28, '#7A6F86', { font: FONT.hand, rot: -.06, j: 0 });
     }
     const yr = card.kind === 'five' ? card.dateText : r.year;
     if (yr) typedText(String(yr), CW - 40 - typedWidth(String(yr), 30), 80, 30, '#26222B', { seed: 3 });
     if (r.code) handText(r.code, CW - 46, 136, 30, PAL.red, { font: FONT.hand, align: 'right', rot: -.03, j: 0, weight: 600 });
-    else if (card.unclassed) handText('nog niet ingedeeld', CW - 46, 136, 26, '#8A7F92', { font: FONT.hand, align: 'right', rot: -.03, j: 0 });
+    else if (card.unclassed) handText(tr('nog niet ingedeeld'), CW - 46, 136, 26, '#8A7F92', { font: FONT.hand, align: 'right', rot: -.03, j: 0 });
   } else if (r.code) handText(r.code, CW - 46, 82, 30, PAL.red, { font: FONT.hand, align: 'right', rot: -.03, j: 0, weight: 600 });
   if (r.kind && card.kind !== 'five') handText(r.kind, 40, 136, 24, '#6A6070', { font: FONT.fell, j: 0 });
   // the telling
@@ -135,7 +135,7 @@ function paintCardFront(card) {
   if (!half || fused) {
     const lift = 0;
     C.save(); C.translate(0, -lift);
-    const who = r.teller ? `Verteller: ${r.teller}` : r.initials ? `opgetekend door ${r.initials}` : '';
+    const who = r.teller ? tr('Verteller: {who}', { who: r.teller }) : r.initials ? tr('opgetekend door {who}', { who: r.initials }) : '';
     if (who) handText(who, 44, CHC - 36, 21, '#5A5262', { font: FONT.type, j: 0 });
     const num = storyNumber(r); if (num) violetStamp(CW - 140, CHC - 66, num);
     C.restore();
@@ -160,7 +160,7 @@ function paintCardFront(card) {
     for (let i = 0; i < 6; i++) { C.fillStyle = '#8A7A60'; C.beginPath(); C.moveTo(rnd() * CW, rnd() * CHC); C.lineTo(rnd() * CW, rnd() * CHC); C.lineTo(rnd() * CW, rnd() * CHC); C.fill(); }
     C.restore();
   }
-  if (card.grey) { C.save(); C.globalAlpha = .9; C.fillStyle = '#6C6878'; C.font = `18px ${FONT.fellSC}`; C.fillText('ARCHIEF', 44, 136); C.restore(); }
+  if (card.grey) { C.save(); C.globalAlpha = .9; C.fillStyle = '#6C6878'; C.font = `18px ${FONT.fellSC}`; C.fillText(tr('ARCHIEF'), 44, 136); C.restore(); }
   // pencil notes, in the space kept for them under the text
   let ny = bottom + 44;
   for (const n of card.notes || []) { pencilNote(n.txt, n.other ? 380 : 60, ny, n.other ? 560 : 640, n.other ? 24 : 34, { other: n.other, rot: n.other ? .02 : -.015 }); ny += 58; }
@@ -217,8 +217,8 @@ function drawCard(card, x, y, w, o = {}) {
 function tabLabel(card) {
   const r = card.r;
   if (card.kind === 'note') return { place: 'J.D.', year: '', code: '' };
-  if (r.half === 'bottom') return { place: 'onderste helft', year: '', code: r.code || '' };
-  if (r.summary) return { place: 'samenvatting', year: '', code: '' };
+  if (r.half === 'bottom') return { place: tr('onderste helft'), year: '', code: r.code || '' };
+  if (r.summary) return { place: tr('samenvatting'), year: '', code: '' };
   const place = card.fill && card.fill.place ? card.fill.place : r.place || '— —';
   return { place, year: r.year || '', code: r.code || '' };
 }
@@ -238,7 +238,7 @@ function paintEnvelope(env) {
   // the rubber stamp
   C.save(); C.translate(70, env.open ? 120 : 250); C.rotate(-.04); C.globalAlpha = .82;
   C.strokeStyle = '#8E2F3A'; C.lineWidth = 3; C.strokeRect(-10, -44, 452, 62);
-  C.fillStyle = '#8E2F3A'; C.font = `34px ${FONT.fellSC}`; C.fillText(`IN TE VOEGEN — la ${env.id}`, 4, 0);
+  C.fillStyle = '#8E2F3A'; C.font = `34px ${FONT.fellSC}`; C.fillText(tr('IN TE VOEGEN — la {id}', { id: env.id }), 4, 0);
   C.restore();
   // the count, live
   C.save(); C.translate(EW - 96, env.open ? 108 : 236); C.globalAlpha = .9;
@@ -261,7 +261,7 @@ function paintEnvelope(env) {
   if (env.other) pencilNote(env.other, EW - 330, EH - 40, 300, 22, { other: true, rot: .05 });
   if (env.filed) {
     C.save(); C.translate(EW / 2, EH / 2 + 30); C.rotate(-.18); C.globalAlpha = .75; C.strokeStyle = '#2F4E8C'; C.lineWidth = 6;
-    C.strokeRect(-230, -56, 460, 100); C.fillStyle = '#2F4E8C'; C.font = `66px ${FONT.fellSC}`; C.textAlign = 'center'; C.fillText('INGEVOEGD', 0, 20); C.restore();
+    C.strokeRect(-230, -56, 460, 100); C.fillStyle = '#2F4E8C'; C.font = `66px ${FONT.fellSC}`; C.textAlign = 'center'; C.fillText(tr('INGEVOEGD'), 0, 20); C.restore();
   }
 }
 function envelopeFace(env) {

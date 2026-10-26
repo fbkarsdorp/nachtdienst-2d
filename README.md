@@ -106,6 +106,7 @@ rather than in front of. `?who=cat` and `?who=clawd` put the others on duty.
 ```
 index.html         page
 css/style.css      the letterbox, the fonts
+js/lang.js         Dutch or English: tr() gives the English of a Dutch line in the code
 js/core.js         palette, easing, springs, takes and hops (from the Animation Base)
 js/paint.js        the medium: washes, watercolour, ink, pencil, glow, paper, boiled layers
 js/clawd.js        Clawd: views, eyes, mouths, emotes, emotions, Mood
@@ -125,10 +126,13 @@ js/dev.js          a back door for testing (below)
 js/admin.js        the admin panel on top of it (?admin)
 js/touch.js        the phone: fingertip reach, tap marks, swipes, back button, sideways, wake lock, vibration
 js/main.js         boot, the frame loop, pointer and keys
-data/              nights, map geometry, gazetteer, archive (converted from the original's game/data)
+data/              nights, map geometry, gazetteer, archive (converted from the original's game/data);
+                   nights/en/ and archive/en/ are the English edition, made by tools/english.py
+tools/             translate.mjs (the summaries into English), english.py and en/puzzles.json (the edition)
 fonts/, sounds/    Special Elite, Caveat, Homemade Apple, IM Fell English; card sounds
 ```
 
+- `?lang=en` or `?lang=nl` picks the language (also on the title card; otherwise the browser's).
 - `?seed=1004` picks a night (any other name always maps to the same one).
 - `?go&seed=1004` skips the title and the intro.
 - `?who=cat` or `?who=clawd` puts the cat or Clawd on duty instead of you.
@@ -142,6 +146,23 @@ fonts/, sounds/    Special Elite, Caveat, Homemade Apple, IM Fell English; card 
 
 Word and number answers are only in the bundles as salted SHA-256 hashes, as in the original; the game hashes what is
 typed or dialled and compares.
+
+## In English
+
+The game also plays in English. The Dutch stays in the code as it was written, and `tr()` (`js/lang.js`) looks up its
+English; tags, tooltips, notes and captions go through it on their own. A night's bundle and the archive have an English
+copy, made by `python3 tools/english.py` from the Dutch ones:
+
+- Each story's summary in English comes from `data/translations/*.opus.json` (not in git): sagenland's translations
+  of its regions, and `node tools/translate.mjs submit` / `collect` for the rest, with the same prompt and model.
+- The cards show the English summary on the front and the original telling on the back, with its dialect named.
+- What a puzzle needs beyond a translation is in `tools/en/puzzles.json`, by hand: the English answers of the typed
+  locks (matched to the Dutch ones by their hashes), the English of the word two torn halves share, and where an
+  English card tears when the Dutch tears in mid-sentence. Notes, hints and the frame are templates in the script.
+- The script checks that each answer is on its cards in English, that a shared word is on both halves (and on no other
+  half in the box), and that a stained number is on its card; a night with a drawer that fails is not written.
+
+The room itself stays Dutch where it is lettered: the sign on the door, the map, the calendar.
 
 ## Sharing
 

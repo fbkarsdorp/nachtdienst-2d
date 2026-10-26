@@ -173,7 +173,7 @@ const N = {
     const fx = G.fx, key = e.key, id = key.split('/')[0], d = G.drawer(id);
     const tw = fx.tw || { id, text: '', shown: 0, done: true, extra: [] }; fx.tw = tw;
     G.setLoc(key, 'machine');
-    const lines = [d.on_success.type_line || 'Verteller: de vorige assistent.', `— ${d.on_success.digit.word} —`];
+    const lines = [d.on_success.type_line || tr('Verteller: de vorige assistent.'), `— ${d.on_success.digit.word} —`];
     let delay = 600;
     SND.carriage();
     lines.forEach((ln, li) => {

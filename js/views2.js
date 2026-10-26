@@ -50,8 +50,8 @@ function paintMapBig() {
   C.restore();
   // the cartouche
   handText('NEDERLAND', MAPV.x + 80, MAPV.y + 70, 40, '#4A3A2A', { font: FONT.fellSC, j: 0 });
-  handText('met de plaatsen der verhalen', MAPV.x + 82, MAPV.y + 100, 22, '#6A5A46', { font: FONT.fell, j: 0 });
-  handText('Centraal Sagenarchief', MAPV.x + MAPV.w - 40, MAPV.y + MAPV.h - 24, 18, '#6A5A46', { font: FONT.fell, align: 'right', j: 0 });
+  handText(tr('met de plaatsen der verhalen'), MAPV.x + 82, MAPV.y + 100, 22, '#6A5A46', { font: FONT.fell, j: 0 });
+  handText(tr('Centraal Sagenarchief'), MAPV.x + MAPV.w - 40, MAPV.y + MAPV.h - 24, 18, '#6A5A46', { font: FONT.fell, align: 'right', j: 0 });
   for (const [px, py] of [[MAPV.x + 12, MAPV.y + 12], [MAPV.x + MAPV.w - 12, MAPV.y + 12], [MAPV.x + 12, MAPV.y + MAPV.h - 12], [MAPV.x + MAPV.w - 12, MAPV.y + MAPV.h - 12]]) paint(ellPts(px, py, 7, 7, 10), { wash: '#B8322A', tex: 0, ink: PAL.ink, sw: .5 });
 }
 V.map = {
@@ -81,13 +81,13 @@ V.map = {
       drawLoupe(P, mx, my, drawPins);
       const np = this.hover.np;
       UI.hit({ r: [MAPV.mx - 20, MAPV.my, MAPV.mw + 40, MAPV.mh], cursor: active ? 'crosshair' : 'zoom-in',
-        tip: np && np.km < 10 ? `${np.name}${this.hover.n ? ` · ${this.hover.n} ${this.hover.n === 1 ? 'verhaal' : 'verhalen'}` : ''}` : null,
+        tip: np && np.km < 10 ? `${np.name}${this.hover.n ? ` · ${this.hover.n} ${tr(this.hover.n === 1 ? 'verhaal' : 'verhalen')}` : ''}` : null,
         onClick: () => { if (UI.touch && active && !(this.lastTap && Math.hypot(this.lastTap[0] - mx, this.lastTap[1] - my) < 40 && T - this.lastTap[2] < 4)) { this.lastTap = [mx, my, T]; return; } this.lastTap = null; if (active) { SND.click(); const r = G.pin(lat, lon); if (r && r.ok) { this.flash = T; SND.good(); } } else G.say(d && d.type === 'P2' ? 'Eerst de envelop open.' : 'Er hoeft niets op de kaart.'); } });
     }
     nightGrade(400, 200, 1, { r: 1900 });
     drawPeek({ x: 1780, u: 32 });
     backButton(() => openView('room'));
-    if (active) handText('Prik de plaats van de kaart zonder plaats.', MAPV.x + MAPV.w / 2, MAPV.y + MAPV.h + 30, 26, 'rgba(240,230,210,.0)', { font: FONT.hand, align: 'center', j: 0 });
+    if (active) handText(tr('Prik de plaats van de kaart zonder plaats.'), MAPV.x + MAPV.w / 2, MAPV.y + MAPV.h + 30, 26, 'rgba(240,230,210,.0)', { font: FONT.hand, align: 'center', j: 0 });
   },
 };
 // the pins for the map: helpers of the drawer in hand (grey), and every pin put in tonight
@@ -157,14 +157,14 @@ V.typewriter = {
   leave() { focusKeys(false); },
   purpose() {
     const S = G.S;
-    if (S.five === 'reading') return { kind: 'five', label: 'kaart uit kast V' };
+    if (S.five === 'reading') return { kind: 'five', label: tr('kaart uit kast V') };
     const id0 = S.env, d0 = id0 && G.drawer(id0);
-    if (d0 && ['P1', 'P5'].includes(d0.type) && S.drawers[id0] === 'open') return { kind: d0.type, label: d0.type === 'P1' ? `etiket voor la ${id0}` : `samenvatting, la ${id0}`, id: id0 };
-    const r4 = activeR4(); if (r4 && S.woke[r4.id]) return { kind: 'r4', label: `la ${r4.id}`, id: r4.id };
+    if (d0 && ['P1', 'P5'].includes(d0.type) && S.drawers[id0] === 'open') return { kind: d0.type, label: tr(d0.type === 'P1' ? 'etiket voor la {id}' : 'samenvatting, la {id}', { id: id0 }), id: id0 };
+    const r4 = activeR4(); if (r4 && S.woke[r4.id]) return { kind: 'r4', label: tr('la {id}', { id: r4.id }), id: r4.id };
     // what the machine typed by itself stays on the paper until its envelope is filed
-    if (G.fx.tw && S.drawers[G.fx.tw.id] === 'solved') return { kind: 'r4', label: `la ${G.fx.tw.id}`, id: G.fx.tw.id, done: true };
+    if (G.fx.tw && S.drawers[G.fx.tw.id] === 'solved') return { kind: 'r4', label: tr('la {id}', { id: G.fx.tw.id }), id: G.fx.tw.id, done: true };
     const id = S.env, d = id && G.drawer(id);
-    if (d && ['P1', 'P5'].includes(d.type) && S.drawers[id] === 'open') return { kind: d.type, label: d.type === 'P1' ? `etiket voor la ${id}` : `samenvatting, la ${id}`, id };
+    if (d && ['P1', 'P5'].includes(d.type) && S.drawers[id] === 'open') return { kind: d.type, label: tr(d.type === 'P1' ? 'etiket voor la {id}' : 'samenvatting, la {id}', { id }), id };
     return { kind: 'free', label: null };
   },
   draw() {
@@ -211,7 +211,7 @@ V.typewriter = {
       const wrapped = wrapLines(txt, 760, `${TWV.size}px ${FONT.type}`);
       return wrapped.map(t => ({ txt: t, seed: 50 })).concat(tw.extra || []).slice(-10);
     }
-    if (pur.kind === 'five') return [{ txt: '… en wat de assistent daar zag,', col: '#4A4450' }, { txt: 'dat was', col: '#4A4450' }];
+    if (pur.kind === 'five') return [{ txt: tr('… Op de bovenste stond'), col: '#4A4450' }, { txt: tr('een naam:'), col: '#4A4450' }];
     return out;
   },
   key(e) {
@@ -525,7 +525,7 @@ function paintDevilBig() {
   boilSeed('devilbig');
   paint(rectPts(X.x - 30, X.y - 100, X.w + 60, 76, 1), { wash: '#6A4639', ink: PAL.ink, sw: 1.1 });
   paint(rectPts(X.x + 120, X.y - 88, X.w - 240, 52, .6), { wash: '#E3D6B6', ink: PAL.ink, sw: .6 });
-  handText('V · DE DUIVEL', X.x + X.w / 2, X.y - 49, 40, PAL.ink, { font: FONT.fellSC, align: 'center', j: 0 });
+  handText('V · ' + tr('De duivel').toUpperCase(), X.x + X.w / 2, X.y - 49, 40, PAL.ink, { font: FONT.fellSC, align: 'center', j: 0 });
   paint(rectPts(X.x, X.y - 24, X.w, X.h + 24, 1.5), { wash: '#4B302A', ink: PAL.ink, sw: 1.2 });
   for (let row = 0; row < 7; row++) for (let col = 0; col < 3; col++) {
     const d = cabCell(col, row);
@@ -542,7 +542,7 @@ function drawHalvesBox(d) {
   paint(rectPts(x + 40, y + 60, 420, 220, 1.5), { wash: '#B99A6A', ink: PAL.ink, sw: 1 });
   paint(rectPts(x + 56, y + 76, 388, 188, 1), { wash: '#8E7048', ink: null });
   for (let i = 0; i < 9; i++) paint(rectPts(x + 66 + i * 40, y + 70 + (i % 3) * 6, 64, 120, .6), { wash: PAL.card, tex: 0, ink: PAL.ink, sw: .5 });
-  handText('losse helften', x + 250, y + 248, 30, '#F2E6CC', { font: FONT.hand, weight: 600, align: 'center', j: 0 });
+  handText(tr('losse helften'), x + 250, y + 248, 30, '#F2E6CC', { font: FONT.hand, weight: 600, align: 'center', j: 0 });
   if (S.drawers[d.id] === 'open') UI.hit({ r: [x + 40, y + 60, 420, 220], tip: 'De doos met helften', onClick: () => V.halves.open() });
 }
 V.halves = {
@@ -575,7 +575,7 @@ V.halves = {
       const card = G.cardView(show), t = this.try, back = t && !t.ok ? easeIn(clamp((T - t.t - .5) / .4)) : 0;
       drawCard(card, 120, 40 + 620 * .4 + 6 + back * 300, 620, { alpha: 1 - back * .8, rot: t && !t.ok ? Math.sin((T - t.t) * 40) * .02 * (1 - back) : 0 });
       if (!t) G.markRead(show);
-    } else handText('Kies een onderste helft.', 430, 380, 34, 'rgba(240,230,210,.6)', { font: FONT.hand, align: 'center', j: 0 });
+    } else handText(tr('Kies een onderste helft.'), 430, 380, 34, 'rgba(240,230,210,.6)', { font: FONT.hand, align: 'center', j: 0 });
     if (this.try && T - this.try.t > 1.1) { const ok = this.try.ok; this.try = null; if (ok) this.on = false; }
     UI.button('Dicht', 1760, 1020, { size: 30, onClick: () => { this.on = false; }, key: 'Esc' });
     void d;
@@ -622,16 +622,18 @@ V.title = {
     C.save(); C.fillStyle = 'rgba(14,10,20,.62)'; C.fillRect(0, 0, W, H); C.restore();
     boilSeed('title');
     handText('Nachtdienst', W / 2, 300, 150, '#F1E6CC', { font: FONT.fell, align: 'center', j: .8 });
-    handText('Centraal Sagenarchief · 1983', W / 2, 372, 40, '#CDBFA2', { font: FONT.fellSC, align: 'center', j: .3 });
+    handText(tr('Centraal Sagenarchief') + ' · 1983', W / 2, 372, 40, '#CDBFA2', { font: FONT.fellSC, align: 'center', j: .3 });
     const save = G.hasSave();
     let y = 520;
-    if (save) { UI.button(`Verder met nacht ${save.seed}`, W / 2, y, { size: 40, onClick: () => beginNight(save.seed, save.name, true) }); y += 100; }
+    if (save) { UI.button(tr('Verder met nacht {n}', { n: save.seed }), W / 2, y, { size: 40, id: 'resume', onClick: () => beginNight(save.seed, save.name, true) }); y += 100; }
     UI.button(save ? 'Een nieuwe nacht' : 'Begin de nacht', W / 2, y, { size: 40, onClick: () => beginNight(this.seed, this.name, false) }); y += 100;
-    UI.button(`Nacht nr. ${this.seed}  ↻`, W / 2 - 200, y, { size: 28, onClick: () => { this.seed = NIGHT_SEEDS[Math.floor(Math.random() * NIGHT_SEEDS.length)]; } });
-    UI.button(this.editing ? `Naam: ${this.name}${Math.floor(T * 2) % 2 ? '|' : ' '}` : this.name ? `Naam: ${this.name}` : 'Je naam (voor de kaart)', W / 2 + 200, y, { size: 28, id: 'name', onClick: () => { this.editing = true; focusKeys(true, true); } });
+    UI.button(tr('Nacht nr. {n}', { n: this.seed }) + '  ↻', W / 2 - 200, y, { size: 28, id: 'seed', onClick: () => { this.seed = NIGHT_SEEDS[Math.floor(Math.random() * NIGHT_SEEDS.length)]; } });
+    UI.button(this.editing ? `${tr('Naam:')} ${this.name}${Math.floor(T * 2) % 2 ? '|' : ' '}` : this.name ? `${tr('Naam:')} ${this.name}` : 'Je naam (voor de kaart)', W / 2 + 200, y, { size: 28, id: 'name', onClick: () => { this.editing = true; focusKeys(true, true); } });
     y += 90;
-    UI.button(SND.on ? 'Geluid: aan' : 'Geluid: uit', W / 2, y, { size: 26, id: 'snd', onClick: () => SND.toggle() });
-    handText('Met koptelefoon. Verhalen: Nederlandse Volksverhalenbank, Meertens Instituut (KNAW).', W / 2, H - 40, 26, 'rgba(230,220,200,.55)', { font: FONT.hand, align: 'center', j: 0 });
+    UI.button(SND.on ? 'Geluid: aan' : 'Geluid: uit', W / 2 - 150, y, { size: 26, id: 'snd', onClick: () => SND.toggle() });
+    // the other language: the page starts again in it (a night under way is kept, and goes on in the new language)
+    UI.button(LANG === 'en' ? 'Nederlands' : 'English', W / 2 + 150, y, { size: 26, id: 'lang', onClick: () => setLang(LANG === 'en' ? 'nl' : 'en') });
+    handText(tr('Met koptelefoon. Verhalen: Nederlandse Volksverhalenbank, Meertens Instituut (KNAW).'), W / 2, H - 40, 26, 'rgba(230,220,200,.55)', { font: FONT.hand, align: 'center', j: 0 });
     UI.button('Colofon', W - 150, H - 60, { size: 26, id: 'colofon', onClick: () => colofonToggle(true) });
   },
   key(e) {
@@ -657,7 +659,7 @@ V.intro = {
       typedText(l.slice(0, n), 420, 340 + i * 74, 40, '#E9E0CC', { seed: i });
     });
     UI.hit({ r: [0, 0, W, H], tip: null, cursor: 'pointer', onClick: () => this.done() });
-    handText(TOUCH ? 'tik om verder te gaan' : 'klik om verder te gaan', W - 60, H - 40, 24, 'rgba(230,220,200,.35)', { font: FONT.hand, align: 'right', j: 0 });
+    handText(tr(TOUCH ? 'tik om verder te gaan' : 'klik om verder te gaan'), W - 60, H - 40, 24, 'rgba(230,220,200,.35)', { font: FONT.hand, align: 'right', j: 0 });
     if (age > this.lines.length * per + 1.6) this.done();
   },
   done() { if (this.finished) return; this.finished = true; transition('iris', () => { setView('room'); introRoom(); }, { at: [W / 2, H / 2] }); },
@@ -706,8 +708,8 @@ V.final = {
   card() {
     const S = G.S, d = new Date(), date = `${d.getDate()}-${d.getMonth() + 1}-1983`;
     const desc = G.F.card_five.description.replace('____', S.fiveWord || '…');
-    return { key: 'own' + S.seed, kind: 'own', r: { kind: 'Sage', description: desc, place: 'Amsterdam', prov: 'N.-H.', year: `${date}, ${hhmm(S.endMinutes || G.minutes())}`,
-      code: `NACHT ${S.seed}`, teller: S.name || 'de assistent' }, notes: [{ txt: G.F.note_final }], ver: S.fiveWord };
+    return { key: 'own' + S.seed, kind: 'own', r: { kind: tr('Sage'), description: desc, place: 'Amsterdam', prov: 'N.-H.', year: `${date}, ${hhmm(S.endMinutes || G.minutes())}`,
+      code: `${tr('NACHT')} ${S.seed}`, teller: S.name || tr('de assistent') }, notes: [{ txt: G.F.note_final }], ver: S.fiveWord };
   },
   draw() {
     const S = G.S;
@@ -715,7 +717,7 @@ V.final = {
     stateLayer('morning', 'morning', 0, 0, W, H, () => { boilSeed('morning'); for (let i = 0; i < 16; i++) paint(ellPts(hash(i * 3) * W, hash(i * 5) * H, 300, 200, 16), { fill: '#B4AE9F', fillOp: 60, bleed: .3, layers: 3, ink: null }); }).blit();
     if (this.mode === 'shut') {
       handText(G.F.good_end, W / 2, 360, 70, '#3A3248', { font: FONT.hand, weight: 600, align: 'center', j: .4 });
-      handText(`Twaalf enveloppen ingevoegd. ${hhmm(S.endMinutes || G.minutes())}.`, W / 2, 460, 40, '#4A4250', { font: FONT.type, align: 'center', j: 0 });
+      handText(tr('Twaalf enveloppen ingevoegd. {t}.', { t: hhmm(S.endMinutes || G.minutes()) }), W / 2, 460, 40, '#4A4250', { font: FONT.type, align: 'center', j: 0 });
       assistant(W / 2, 820, 34, { ...feel('relieved', T), boilKey: 'endc', frame: 'stage' });
     } else {
       const fk = clamp((T - this.flipT) / .36), sx = fk < 1 ? Math.abs(Math.cos(fk * Math.PI)) : 1, back = fk < .5 ? !this.back : this.back;
@@ -727,7 +729,7 @@ V.final = {
     }
     UI.button('Een nieuwe nacht', this.mode === 'shut' ? W / 2 : 1290, this.mode === 'shut' ? 980 : 860, { size: 32, onClick: () => { location.reload(); } });
     // who made it, at the end of the night
-    handText('Folgert Karsdorp, met Claude · portret: Lauren Fonteyn · verhalen: Meertens Instituut', W / 2, H - 22, 22, 'rgba(60,52,70,.6)', { font: FONT.hand, align: 'center', j: 0 });
+    handText(tr('Folgert Karsdorp, met Claude · portret: Lauren Fonteyn · verhalen: Meertens Instituut'), W / 2, H - 22, 22, 'rgba(60,52,70,.6)', { font: FONT.hand, align: 'center', j: 0 });
     UI.button('Colofon', W - 130, H - 50, { size: 24, id: 'colofon', onClick: () => colofonToggle(true) });
   },
 };
@@ -736,7 +738,7 @@ function drawOwnBack(x, y, w) {
   boilSeed('ownback');
   C.drawImage(paperSheet(w, h, '#F3EAD3', 5, .5), x, y, w, h);
   const total = ARCHIVE_INDEX.total, n = keys.length;
-  handText(`${n} kaarten gelezen. Nog ${total - n} in deze kasten.`, x + 40, y + 60, 32, '#3A3248', { font: FONT.hand, weight: 600, j: 0 });
+  handText(tr('{n} kaarten gelezen. Nog {m} in deze kasten.', { n, m: total - n }), x + 40, y + 60, 32, '#3A3248', { font: FONT.hand, weight: 600, j: 0 });
   const cols = 2, per = 13, list = keys.slice(0, cols * per);
   list.forEach((k, i) => {
     const cv = G.cardView(k), r = cv.r || {}, cx = x + 40 + Math.floor(i / per) * (w / 2 - 20), cy = y + 110 + (i % per) * 34;
@@ -748,7 +750,7 @@ function drawOwnBack(x, y, w) {
       UI.hit({ r: rr, tip: 'Naar de Verhalenbank', onClick: () => {} });
     }
   });
-  if (keys.length > list.length) handText(`en nog ${keys.length - list.length}…`, x + w - 40, y + h - 30, 24, '#6A6070', { font: FONT.hand, align: 'right', j: 0 });
+  if (keys.length > list.length) handText(tr('en nog {n}…', { n: keys.length - list.length }), x + w - 40, y + h - 30, 24, '#6A6070', { font: FONT.hand, align: 'right', j: 0 });
 }
 // the card as a picture, shown so it can be kept (a download link where the browser allows one)
 function saveOwnCard(card) {

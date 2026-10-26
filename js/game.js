@@ -10,10 +10,11 @@ const HINT_COST = [2, 4, 8];    // minutes on the clock
 
 // the last card: the top card in cabinet V bears a name, and the blank is it. The player's own name goes in at once
 // (any part of it), as do these; anything else after the nudges. Without a name given, what is typed becomes the name.
-const FIVE_ENDING = [', en wat de assistent daar zag, dat was ____.', '. Op de bovenste stond een naam: ____.'];
-const FIVE_WORDS = ['assistent', 'nieuwe assistent', 'vorige assistent', 'mij', 'mijzelf', 'ik', 'mijn naam', 'jij', 'jou'];
-const FIVE_INVITE = 'vul het zelf in. aan de machine';
-const FIVE_NUDGES = ['Wie zat hier vannacht?', 'Wiens kaart is dit?', 'Je eigen naam.'];
+const FIVE_ENDING = [', en wat de assistent daar zag, dat was ____.', '. Op de bovenste stond een naam: ____.'].map(s => tr(s));
+const FIVE_WORDS = LANG === 'en' ? ['assistant', 'new assistant', 'previous assistant', 'me', 'myself', 'i', 'my name', 'you']
+  : ['assistent', 'nieuwe assistent', 'vorige assistent', 'mij', 'mijzelf', 'ik', 'mijn naam', 'jij', 'jou'];
+const FIVE_INVITE = tr('vul het zelf in. aan de machine');
+const FIVE_NUDGES = ['Wie zat hier vannacht?', 'Wiens kaart is dit?', 'Je eigen naam.'].map(s => tr(s));
 // under it, the assistants before: the same story, each with its own name, yellower the further back. Told by J.D., every one.
 const FIVE_BEFORE = [
   { name: 'W. de Graaf', date: '14-11-1971', tone: '#ECDDB8' },
@@ -21,7 +22,7 @@ const FIVE_BEFORE = [
   { name: 'H. Brands', date: '27-9-1946', tone: '#DAC493' },
   { name: 'J. Pieters', date: '19-1-1932', tone: '#CFB582' },
 ];
-const FIVE_FILED = 'Opgeborgen. — J.D.', FIVE_FINAL = 'Opgeborgen. Bij de anderen. — J.D.';
+const FIVE_FILED = tr('Opgeborgen. — J.D.'), FIVE_FINAL = tr('Opgeborgen. Bij de anderen. — J.D.');
 const G = {
   B: null, S: null, F: null, view: 'title', arg: null, reader: null, busy: false, events: [],
   clawd: { x: 300, tx: 300, y: WALK_Y, face: 'front', walking: false, walkT0: 0, x0: 300, then: null, mood: new Mood('neutral'), look: null, turnT: 0, prevFace: 'front' },
@@ -133,7 +134,7 @@ const G = {
     // J.D. says where he left it; the bin he does not own up to, so the other hand does
     if (fc && this.where(`${id}/${fc.card}`).startsWith('found')) {
       foundOther = fc.loc === 'bin';
-      found = foundOther ? 'hij heeft er één weggegooid' : this.F.found_notes[fc.loc];
+      found = foundOther ? tr('hij heeft er één weggegooid') : this.F.found_notes[fc.loc];
     }
     const other = this.S.fired.otherHandOn === id ? this.F.reactions.other_hand : null;
     return { id, note: d.note, count, have: counted, sealed: !!this.S.sealed[id], filed: st === 'filed', open: this.S.envOpen && this.S.env === id && !this.S.sealed[id],
@@ -185,8 +186,8 @@ const G = {
     if (!this.S.unlocked[n]) return { ok: false, why: this.F.not_yet };
     if (this.S.active && this.S.active !== n) return { ok: false, why: this.F.finish_first.replace('{roman}', ROMAN[this.S.active]) };
     for (let k = 1; k < i; k++) if (this.S.drawers[`${n}-${k}`] !== 'filed') return { ok: false, why: this.F.not_yet };
-    if (this.S.env) return { ok: false, why: 'Eén envelop tegelijk.' };
-    if (this.S.hand) return { ok: false, why: 'De hand is vol.' };
+    if (this.S.env) return { ok: false, why: tr('Eén envelop tegelijk.') };
+    if (this.S.hand) return { ok: false, why: tr('De hand is vol.') };
     return { ok: true };
   },
   nextDrawer(n) { for (let i = 1; i <= 3; i++) if (this.S.drawers[`${n}-${i}`] !== 'filed') return `${n}-${i}`; return null; },
@@ -288,11 +289,11 @@ const G = {
   },
   toTray(key) { this.setLoc(key, 'tray'); SND.shove(); this.save(); },
   take(key) {
-    if (this.S.hand && (this.S.hand.kind !== 'card' || !this.S.env || !this.S.hand.key.startsWith(this.S.env + '/'))) { this.say('De hand is vol.'); return false; }
+    if (this.S.hand && (this.S.hand.kind !== 'card' || !this.S.env || !this.S.hand.key.startsWith(this.S.env + '/'))) { this.say(tr('De hand is vol.')); return false; }
     if (this.S.hand) {
       // a card in the hand and another to take: they change places
       if (this.S.hand.kind === 'card') { const k = this.S.hand.key; this.setLoc(k, this.where(key) === 'table' ? 'table' : 'tray'); if (this.where(key) === 'table') this.S.table[this.S.table.indexOf(key)] = k; }
-      else { this.say('De hand is vol.'); return false; }
+      else { this.say(tr('De hand is vol.')); return false; }
     }
     this.S.table = this.S.table.filter(k => k !== key);
     this.setLoc(key, 'hand'); this.S.hand = { kind: 'card', key };
@@ -305,7 +306,7 @@ const G = {
     const key = h.key;
     if (key === 'desk') return false;
     const id = key.split('/')[0];
-    if (this.S.env !== id) { this.say('Die hoort in een andere envelop.'); return false; }
+    if (this.S.env !== id) { this.say(tr('Die hoort in een andere envelop.')); return false; }
     this.S.hand = null;
     const { d, c } = this.card(key);
     // a loose half goes back in the box of halves; once the lock is open, a card brought back goes straight into
@@ -325,7 +326,7 @@ const G = {
   askHint() {
     const id = this.S.env; if (!id) return;
     const n = this.S.hints[id] || 0, d = this.drawer(id);
-    if (n >= (d.hints || []).length) { this.say('Meer weet ik ook niet.'); return; }
+    if (n >= (d.hints || []).length) { this.say(tr('Meer weet ik ook niet.')); return; }
     this.S.hints[id] = n + 1; this.S.penalty += HINT_COST[n];
     SND.pencil(); this.clawd.mood.act('thinking', 1.4);
     this.save();
@@ -378,7 +379,7 @@ const G = {
   // with the sealed envelope taken in hand at the table
   takeSealed() {
     const id = this.S.env; if (!id || !this.S.sealed[id]) return;
-    if (this.S.hand) { this.say('De hand is vol.'); return; }
+    if (this.S.hand) { this.say(tr('De hand is vol.')); return; }
     this.S.hand = { kind: 'env', id };
     this.S.env = null;
     SND.envOut(); this.clawd.mood.setRest('determined'); this.save();
@@ -482,7 +483,7 @@ const G = {
   pickUp(loc) {
     const key = loc === 'floor' ? this.S.fired.floor : this.foundAt(loc);
     if (!key || (loc === 'floor' && this.where(key) !== 'floor')) return false;
-    if (this.S.hand) { this.say('De hand is vol.'); return false; }
+    if (this.S.hand) { this.say(tr('De hand is vol.')); return false; }
     this.setLoc(key, 'hand'); this.S.hand = { kind: 'card', key };
     if (loc === 'lamp') this.fx.wobble = T;
     if (loc === 'bin') { this.S.crumpled = this.S.crumpled || {}; this.S.crumpled[key] = true; }
@@ -547,7 +548,7 @@ const G = {
     const L = d.lock, km = haversine(lat, lon, L.target_geo[0], L.target_geo[1]);
     this.S.pins[id] = { lat, lon, ok: km <= L.radius_km };
     if (km <= L.radius_km) { this.S.pins[id] = { lat: L.target_geo[0], lon: L.target_geo[1], ok: true }; this.solve(id); return { ok: true }; }
-    this.say(`${this.F.nee} Meer naar het ${compass(lat, lon, L.target_geo[0], L.target_geo[1])}.`);
+    this.say(`${this.F.nee} ${tr('Meer naar het {dir}.', { dir: tr(compass(lat, lon, L.target_geo[0], L.target_geo[1])) })}`);
     this.clawd.mood.act('thinking', 1.2);
     this.save();
     return { ok: false };
@@ -556,7 +557,7 @@ const G = {
     const id = this.S.env, d = id && this.drawer(id);
     if (!d || d.type !== 'P4' || this.S.drawers[id] !== 'open') return null;
     const top = this.roleKey(id, 'top');
-    if (this.where(top) !== 'table' && this.where(top) !== 'tray' && this.where(top) !== 'hand') { this.say('Eerst het bovenste stuk op tafel.'); return null; }
+    if (this.where(top) !== 'table' && this.where(top) !== 'tray' && this.where(top) !== 'hand') { this.say(tr('Eerst het bovenste stuk op tafel.')); return null; }
     if (key === `${id}/${d.lock.bottom_card}`) { this.solve(id); return true; }
     SND.nee(); this.clawd.mood.act('confused', 1); return false;
   },

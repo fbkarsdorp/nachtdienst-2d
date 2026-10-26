@@ -33,7 +33,7 @@ const STATIONS = {
 };
 
 const ROMAN = ['', 'I', 'II', 'III', 'IV', 'V'];
-const CAB_LABEL = ['', 'Voortekenen', 'Witte wieven', 'Weerwolven', 'Spoken', 'De duivel'];
+const CAB_LABEL = ['', 'Voortekenen', 'Witte wieven', 'Weerwolven', 'Spoken', 'De duivel'].map(s => tr(s));
 // the three drawers of tonight, in the middle column of each cabinet
 const PUZZLE_ROWS = [3, 4, 5];
 function cabGrid(c) {

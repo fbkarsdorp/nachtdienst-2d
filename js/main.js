@@ -226,9 +226,9 @@ function bootFailed(e) {
   const msg = (e && (e.message || e.reason && e.reason.message || e.reason)) || String(e);
   l.innerHTML = '';
   const box = document.createElement('div'); box.style.cssText = 'max-width:80%;text-align:center;line-height:1.3';
-  box.append('De lamp gaat niet aan.');
+  box.append(tr('De lamp gaat niet aan.'));
   const small = document.createElement('div'); small.style.cssText = 'font:16px/1.4 ui-monospace,monospace;opacity:.7;margin:.6em 0 1em;word-break:break-word'; small.textContent = msg;
-  const again = document.createElement('button'); again.textContent = 'Opnieuw proberen'; again.style.cssText = 'font:inherit;color:#f2c66b;background:none;border:0;text-decoration:underline;cursor:pointer';
+  const again = document.createElement('button'); again.textContent = tr('Opnieuw proberen'); again.style.cssText = 'font:inherit;color:#f2c66b;background:none;border:0;text-decoration:underline;cursor:pointer';
   again.onclick = () => location.reload();
   box.append(small, again); l.append(box);
 }

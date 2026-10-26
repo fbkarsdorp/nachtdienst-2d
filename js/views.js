@@ -182,7 +182,7 @@ V.room = {
     UI.hit({ r: [0, FLOOR_Y + 10, W, H - FLOOR_Y], tip: null, cursor: 'default', floor: true, onClick: (x) => walkTo(x, 'front') });
     for (const c of CABS) {
       const st = 'cab' + c.n;
-      UI.hit({ r: [c.x - 8, c.y - 34, c.w + 16, FLOOR_Y - c.y + 34], tip: `Kast ${ROMAN[c.n]} · ${CAB_LABEL[c.n]}`, cursor: 'pointer',
+      UI.hit({ r: [c.x - 8, c.y - 34, c.w + 16, FLOOR_Y - c.y + 34], tip: `${tr('Kast')} ${ROMAN[c.n]} · ${CAB_LABEL[c.n]}`, cursor: 'pointer',
         onClick: go(st, () => openView(c.n === 5 ? 'dial' : 'cabinet', c.n, [c.x + c.w / 2, c.y + 150])) });
     }
     UI.hit({ r: [ROOM.clock.x, ROOM.clock.y, ROOM.clock.w, ROOM.clock.h], tip: 'De klok', onClick: go('clock', () => openView('clock', null, [ROOM.clock.cx, ROOM.clock.cy])) });
@@ -467,7 +467,7 @@ V.table = {
     else {
       const [bx, by] = TABLE.bay;
       C.save(); C.globalAlpha = .22; C.setLineDash([12, 12]); C.strokeStyle = '#E9E2C8'; C.lineWidth = 2; C.strokeRect(bx, by + 40, 600, 330); C.restore();
-      handText(S.hand && S.hand.kind === 'env' ? 'De envelop is in je hand.' : 'Haal een envelop uit een kast.', bx + 300, by + 214, 34, 'rgba(233,226,200,.55)', { font: FONT.hand, align: 'center', j: .3 });
+      handText(tr(S.hand && S.hand.kind === 'env' ? 'De envelop is in je hand.' : 'Haal een envelop uit een kast.'), bx + 300, by + 214, 34, 'rgba(233,226,200,.55)', { font: FONT.hand, align: 'center', j: .3 });
     }
     // the tray, cards standing in it
     if (id && S.envOpen) drawTray();
@@ -528,16 +528,16 @@ function drawSpikeTop() {
   // the note, then the stamped envelopes, each turned a little
   push(); translate(x, y); rotate(-.2);
   paint(rectPts(-110, -66, 220, 132, 1), { wash: '#F2EAD3', ink: PAL.ink, sw: .6 });
-  handText('Twaalf enveloppen…', -90, -20, 26, '#3A3248', { font: FONT.hand, weight: 600, j: .2 });
+  handText(tr('Twaalf enveloppen…'), -90, -20, 26, '#3A3248', { font: FONT.hand, weight: 600, j: .2 });
   pop();
   for (let i = 0; i < n; i++) {
     push(); translate(x + (hash(i * 5) - .5) * 14, y + (hash(i * 9) - .5) * 14); rotate((hash(i * 3.7) - .5) * 1.4);
     paint(rectPts(-120, -75, 240, 150, 1), { wash: i % 2 ? PAL.manila : '#D3AE6E', ink: PAL.ink, sw: .6 });
-    C.save(); C.globalAlpha = .55; C.strokeStyle = '#2F4E8C'; C.lineWidth = 3; C.strokeRect(-80, -18, 160, 36); C.font = `22px ${FONT.fellSC}`; C.fillStyle = '#2F4E8C'; C.textAlign = 'center'; C.fillText('INGEVOEGD', 0, 8); C.restore();
+    C.save(); C.globalAlpha = .55; C.strokeStyle = '#2F4E8C'; C.lineWidth = 3; C.strokeRect(-80, -18, 160, 36); C.font = `22px ${FONT.fellSC}`; C.fillStyle = '#2F4E8C'; C.textAlign = 'center'; C.fillText(tr('INGEVOEGD'), 0, 8); C.restore();
     pop();
   }
   paint(ellPts(x, y, 6, 6, 10), { wash: '#C9CAD6', tex: 0, ink: PAL.ink, sw: .5 });
-  UI.hit({ c: [x, y, 120], tip: n ? `${n} van de twaalf` : 'Het briefje van J.D.', onClick: () => G.read(['note'], 0, 'note') });
+  UI.hit({ c: [x, y, 120], tip: n ? tr('{n} van de twaalf', { n }) : 'Het briefje van J.D.', onClick: () => G.read(['note'], 0, 'note') });
 }
 function drawTypewriterCorner() {
   boilSeed('twcorner');
@@ -558,7 +558,7 @@ function drawEnvelopeBay(id) {
   else UI.hit({ r: [bx, by, bw, bh], tip: null, cursor: 'default', onClick: () => {} });
   if (!sealed && G.S.drawers[id] === 'open') {
     const used = S.hints[id] || 0, d = G.drawer(id);
-    if (used < (d.hints || []).length) UI.button(`Vraag J.D. (+${HINT_COST[used]} min)`, bx + 200, by - 34, { size: 26, onClick: () => G.askHint() });
+    if (used < (d.hints || []).length) UI.button(tr('Vraag J.D. (+{m} min)', { m: HINT_COST[used] }), bx + 200, by - 34, { size: 26, onClick: () => G.askHint(), id: 'hint' });
   }
 }
 function drawTray() {
@@ -584,7 +584,7 @@ function drawTray() {
   });
   paint(rectPts(tx - 10, ty + 120, tw + 20, th - 50, 1), { wash: PAL.oak, ink: PAL.ink, sw: .9 });
   paint(rectPts(tx + tw / 2 - 40, ty + 150, 80, 30, .4), { wash: PAL.brass, tex: 0, ink: PAL.ink, sw: .5 });
-  if (!keys.length) handText('leeg', tx + tw / 2, ty + 230, 30, 'rgba(255,240,210,.4)', { font: FONT.hand, align: 'center', j: 0 });
+  if (!keys.length) handText(tr('leeg'), tx + tw / 2, ty + 230, 30, 'rgba(255,240,210,.4)', { font: FONT.hand, align: 'center', j: 0 });
 }
 function clickTableCard(key) {
   const S = G.S;
@@ -646,11 +646,11 @@ const Reader = {
     if (from === 'five') b.push(['Naar de schrijfmachine', () => { G.closeReader(); openView('typewriter', null, [W / 2, H / 2]); }]);
     b.push(['Terug', () => G.closeReader(), 'Esc']);
     C.font = `600 32px ${FONT.hand}`;
-    const g = GROW(), widths = b.map(([l]) => C.measureText(l).width + 70), gap = 44, total = widths.reduce((s, w2) => s + w2 * g + gap, -gap), by = PHONE ? 1010 : 834;
+    const g = GROW(), widths = b.map(([l]) => C.measureText(tr(l)).width + 70), gap = 44, total = widths.reduce((s, w2) => s + w2 * g + gap, -gap), by = PHONE ? 1010 : 834;
     let bx = W / 2 - total / 2;
     b.forEach(([label, fn, kb], i) => { const bw = widths[i] * g; UI.button(label, bx + bw / 2, by, { size: 32, onClick: fn, w: widths[i] }); if (kb && !TOUCH) handText(kb, bx + bw / 2, 892, 18, 'rgba(240,230,210,.45)', { font: FONT.type, align: 'center', j: 0 }); bx += bw + gap; });
-    if (R.list.length > 1) handText(`${R.i + 1} / ${R.list.length}` + (TOUCH ? '  · veeg ⇆' : ''), PHONE ? x + w + 70 : W / 2, PHONE ? y + h / 2 + 90 : y - 24, 26, 'rgba(240,230,210,.7)', { font: FONT.hand, align: 'center', j: 0 });
-    if (back && !(card.r && card.r.original) && card.kind !== 'note') handText('(achterkant)', x + 40, y + 50, 24, '#8A7F92', { font: FONT.hand, j: 0 });
+    if (R.list.length > 1) handText(`${R.i + 1} / ${R.list.length}` + (TOUCH ? tr('  · veeg ⇆') : ''), PHONE ? x + w + 70 : W / 2, PHONE ? y + h / 2 + 90 : y - 24, 26, 'rgba(240,230,210,.7)', { font: FONT.hand, align: 'center', j: 0 });
+    if (back && !(card.r && card.r.original) && card.kind !== 'note') handText(tr('(achterkant)'), x + 40, y + 50, 24, '#8A7F92', { font: FONT.hand, j: 0 });
   },
   // turning to the next card puts this one down: a room lock wakes while you page through, not only once the reader shuts
   step(d) { const R = G.reader; G.afterPutDown(R.list[R.i]); R.i = (R.i + d + R.list.length) % R.list.length; R.back = false; R.flipT = -9; R.t0 = T - .25; G.markRead(R.list[R.i]); SND.card(); },
@@ -693,14 +693,14 @@ V.cabinet = {
         paint(rrPts(-10, -14, 20, 34, 8), { ink: '#9A9CA6', sw: 1.1 });
         C.restore();
         if (ready) { C.save(); C.globalAlpha = .25 + .15 * Math.sin(T * 3); C.strokeStyle = '#FFE6A8'; C.lineWidth = 4; C.strokeRect(ex - 6, ey - 6, ew + 12, eh + 12); C.restore(); }
-        UI.hit({ r: [cell.x, cell.y, cell.w, cell.h], tip: ready ? `Envelop van la ${id} pakken` : `La ${id}`, onClick: () => clickCabinetEnvelope(id) });
+        UI.hit({ r: [cell.x, cell.y, cell.w, cell.h], tip: ready ? tr('Envelop van la {id} pakken', { id }) : tr('La {id}', { id }), onClick: () => clickCabinetEnvelope(id) });
       } else if (st === 'filed') {
-        UI.hit({ r: [cell.x, cell.y, cell.w, cell.h], tip: `La ${id}: ingevoegd`, onClick: () => { if (S.hand && S.hand.kind === 'card') G.offerDrawer(id); else G.say(G.F.reactions.reopen_filed); } });
+        UI.hit({ r: [cell.x, cell.y, cell.w, cell.h], tip: tr('La {id}: ingevoegd', { id }), onClick: () => { if (S.hand && S.hand.kind === 'card') G.offerDrawer(id); else G.say(G.F.reactions.reopen_filed); } });
       } else {
         // its envelope is out: with it in the hand, this is where it goes
         const want = S.hand && S.hand.kind === 'env' && S.hand.id === id;
         if (want) { C.save(); C.globalAlpha = .5 + .3 * Math.sin(T * 5); C.strokeStyle = '#FFE6A8'; C.lineWidth = 6; C.setLineDash([14, 10]); C.strokeRect(cell.x + 6, cell.y + 6, cell.w - 12, cell.h - 12); C.restore(); }
-        UI.hit({ r: [cell.x, cell.y, cell.w, cell.h], tip: want ? 'Invoegen' : `La ${id}`, onClick: () => clickDrawerSlot(id) });
+        UI.hit({ r: [cell.x, cell.y, cell.w, cell.h], tip: want ? 'Invoegen' : tr('La {id}', { id }), onClick: () => clickDrawerSlot(id) });
       }
     }
     // the other drawers hold the archive
@@ -752,7 +752,7 @@ function paintCabinetBig(n) {
     paint(rectPts(d.x + d.w / 2 - 64, d.y + 14, 128, 34, .4), { wash: PAL.brass, tex: 0, ink: PAL.ink, sw: .5 });
     paint(rectPts(d.x + d.w / 2 - 58, d.y + 18, 116, 26, .2), { wash: '#F0E7D0', tex: 0, pool: 0, ink: null });
     let lab;
-    if (puzzle) { const i = PUZZLE_ROWS.indexOf(row) + 1, id = `${n}-${i}`; lab = (G.S.label && G.S.label[id]) || `la ${id}`; }
+    if (puzzle) { const i = PUZZLE_ROWS.indexOf(row) + 1, id = `${n}-${i}`; lab = (G.S.label && G.S.label[id]) || tr('la {id}', { id }); }
     else { const t = types.length ? types[(row * 3 + col) % types.length] : null; lab = t ? t.code : ''; }
     handText(lab, d.x + d.w / 2, d.y + 38, puzzle ? 22 : 18, puzzle && G.S.label && G.S.label[`${n}-${PUZZLE_ROWS.indexOf(row) + 1}`] ? '#2A2630' : '#4A4450', { font: FONT.type, align: 'center', j: 0 });
     paint(ellPts(d.x + d.w / 2, d.y + d.h - 26, 22, 11, 14, .4), { wash: PAL.brassDk, tex: 0, ink: PAL.ink, sw: .5 });
@@ -836,7 +836,7 @@ function archiveDrawer(n, idx) {
     paint(rectPts(bx + 40, by + 40, bw - 80, 110, 1), { wash: '#8A5E38', ink: PAL.ink, sw: .8 });
     if (!G.S.fired.archiveNote || G.S.fired.archiveNote === `${n}-${idx}`) { G.S.fired.archiveNote = `${n}-${idx}`; pencilNote(G.F.archive_note, bx + 70, by + 104, 900, 34, { col: '#F2E6CC' }); }
     else handText(`${CAB_LABEL[n]}`, bx + 70, by + 106, 34, '#F2E6CC', { font: FONT.fellSC, j: 0 });
-    if (!this.list) { handText(this.err ? 'Het archief is niet te openen.' : 'Even zoeken…', bx + bw / 2, by + 400, 34, '#F2E6CC', { font: FONT.hand, align: 'center', j: 0 }); return; }
+    if (!this.list) { handText(tr(this.err ? 'Het archief is niet te openen.' : 'Even zoeken…'), bx + bw / 2, by + 400, 34, '#F2E6CC', { font: FONT.hand, align: 'center', j: 0 }); return; }
     const L = this.list, per = 30, start = Math.floor(hash(n * 13 + idx) * Math.max(1, L.length - per));
     const items = L.slice(start, start + per);
     items.forEach((a, i) => {
@@ -850,7 +850,7 @@ function archiveDrawer(n, idx) {
       const keyOf = j => `arch:${n}:${start + j}`;
       UI.hit({ r: [x, y - 10, 210, 118], tip: a.p || 'Een kaart', onClick: () => G.read(items.map((_, j) => keyOf(j)), i, 'archive') });
     });
-    handText(`${L.length} kaarten in deze kast`, bx + bw - 40, by + bh - 40, 26, 'rgba(242,230,204,.75)', { font: FONT.hand, align: 'right', j: 0 });
+    handText(tr('{n} kaarten in deze kast', { n: L.length }), bx + bw - 40, by + bh - 40, 26, 'rgba(242,230,204,.75)', { font: FONT.hand, align: 'right', j: 0 });
     UI.button('Dicht', bx + bw - 90, by + 60, { size: 30, onClick: () => { V.drawerOpen = null; SND.drawer(false); } });
   };
   return D;

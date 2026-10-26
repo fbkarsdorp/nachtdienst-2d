@@ -13,9 +13,9 @@ function loadScript(src, tries = 2) {
   return new Promise((ok, bad) => {
     const s = document.createElement('script'); let done = false;
     const fail = why => { if (done) return; done = true; s.remove(); if (tries > 1) loadScript(src + (src.includes('?') ? '&' : '?') + 'r=' + Date.now(), tries - 1).then(ok, bad); else bad(new Error(`${src} ${why}`)); };
-    const timer = setTimeout(() => fail('laadt niet (na 20 s)'), 20000);
+    const timer = setTimeout(() => fail(tr('laadt niet (na 20 s)')), 20000);
     s.onload = () => { if (done) return; done = true; clearTimeout(timer); ok(); };
-    s.onerror = () => { clearTimeout(timer); fail('kon niet geladen worden'); };
+    s.onerror = () => { clearTimeout(timer); fail(tr('kon niet geladen worden')); };
     s.src = src; document.head.appendChild(s);
   });
 }
@@ -26,7 +26,7 @@ function seedFor(name) {
   return NIGHT_SEEDS[h % NIGHT_SEEDS.length];
 }
 function loadNight(seed) {
-  return new Promise((ok, bad) => { _nightCb = ok; loadScript(versioned(`data/nights/${seed}.js`)).catch(bad); });
+  return new Promise((ok, bad) => { _nightCb = ok; loadScript(versioned(`data/nights/${LANG === 'en' ? 'en/' : ''}${seed}.js`)).catch(bad); });
 }
 const ARCHIVE = {};
 const _archWait = {};
@@ -35,15 +35,16 @@ function loadArchive(n) {
   if (ARCHIVE[n]) return Promise.resolve(ARCHIVE[n]);
   return new Promise((ok, bad) => {
     const first = !_archWait[n]; (_archWait[n] = _archWait[n] || []).push(ok);
-    if (first) loadScript(versioned(`data/archive/cabinet-${n}.js`)).catch(bad);
+    if (first) loadScript(versioned(`data/archive/${LANG === 'en' ? 'en/' : ''}cabinet-${n}.js`)).catch(bad);
   });
 }
 
-// Spec 6.2, as pipeline/common.py normalize()
+// Spec 6.2, as pipeline/common.py normalize() (and in English without the, a, an, as tools/english.py hashed it)
+const ARTICLES = LANG === 'en' ? ['the ', 'an ', 'a '] : ['de ', 'het ', 'een ', "'n ", "'t "];
 function normalize(input) {
   let s = String(input).normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
   s = s.replace(/\s+/g, ' ');
-  for (const a of ['de ', 'het ', 'een ', "'n ", "'t "]) if (s.startsWith(a)) { s = s.slice(a.length); break; }
+  for (const a of ARTICLES) if (s.startsWith(a)) { s = s.slice(a.length); break; }
   return s.replace(/[\s.,;:!?'"()\-]+$/, '').trim();
 }
 // SHA-256, small and synchronous (crypto.subtle is not there on every file:// page)

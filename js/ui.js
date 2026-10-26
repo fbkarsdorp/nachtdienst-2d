@@ -25,6 +25,7 @@ const UI = {
   // ---------- notes: a slip of paper in pencil, low in the middle ----------
   note(txt, o = {}) {
     if (!txt) return;
+    txt = tr(txt);
     const n = { txt, t: T, ms: o.ms ?? Math.max(2400, 900 + txt.length * 55), other: o.other, big: o.big, x: o.x, y: o.y };
     this.notes = this.notes.filter(m => m.txt !== txt).slice(-2); this.notes.push(n);
     if (!o.silent) SND.pencil();
@@ -49,12 +50,12 @@ const UI = {
     }
   },
   // ---------- a paper tag to click ----------
-  button(label, x, y, o = {}) {
-    const g = o.noGrow ? 1 : GROW(), size = (o.size || 30) * g;
+  button(nl, x, y, o = {}) {
+    const label = tr(nl), g = o.noGrow ? 1 : GROW(), size = (o.size || 30) * g;
     C.font = `600 ${size}px ${FONT.hand}`;
     const w = o.w ? o.w * g : C.measureText(label).width + 56 * g, h = o.h ? o.h * g : size * 1.6;
     if (o.left != null) x = o.left + w / 2;
-    const hov = this.hover && this.hover.id === (o.id || label) && !o.disabled;
+    const hov = this.hover && this.hover.id === (o.id || nl) && !o.disabled;
     const lift = hov ? -3 : 0;
     boilSeed('btn' + label);
     push(); translate(x, y + lift); rotate(o.rot ?? ((strHash(label) % 5) - 2) * .006);
@@ -67,12 +68,12 @@ const UI = {
     pop();
     // on a phone a tag is tapped, not pointed at: its tap area is at least a fingertip tall (about 44 css px)
     const pad = PHONE ? Math.max(0, (124 - h) / 2) : 0;
-    return this.hit({ id: o.id || label, r: [x - w / 2 - pad * .25, y - h / 2 - pad, w + pad * .5, h + 2 * pad], tip: o.tip, onClick: o.onClick, disabled: o.disabled, cursor: o.disabled ? 'not-allowed' : 'pointer' });
+    return this.hit({ id: o.id || nl, r: [x - w / 2 - pad * .25, y - h / 2 - pad, w + pad * .5, h + 2 * pad], tip: o.tip, onClick: o.onClick, disabled: o.disabled, cursor: o.disabled ? 'not-allowed' : 'pointer' });
   },
   // ---------- the pointer's label ----------
   drawTip() {
     const h = this.hover; if (!h || !h.tip || this.dragging) return;
-    const [mx, my] = this.mouse, txt = typeof h.tip === 'function' ? h.tip() : h.tip; if (!txt) return;
+    const [mx, my] = this.mouse, txt = tr(typeof h.tip === 'function' ? h.tip() : h.tip); if (!txt) return;
     C.font = `600 28px ${FONT.hand}`; const w = C.measureText(txt).width + 30;
     const x = clamp(mx + 22, 10, W - w - 10), y = clamp(my + 30, 10, H - 50);
     boilSeed('tip' + txt);
@@ -122,7 +123,7 @@ function drawHand(G, x = W - 250, y = H - 190) {
     drawCard(card, -110, -60, 220, {});
   }
   pop();
-  return UI.hit({ id: 'hand', r: [x - 120, y - 70, 240, 150], tip: h.kind === 'env' ? 'In de hand: de envelop' : 'In de hand', onClick: () => G.clickHand() });
+  return UI.hit({ id: 'hand', r: [x - 120, y - 70, 240, 150], tip: h.kind === 'env' ? tr('In de hand: de envelop') : tr('In de hand'), onClick: () => G.clickHand() });
 }
 
 // ---------- transitions ----------
@@ -173,15 +174,15 @@ function brushWipe(p, cols = ['#2A2030', '#3A2C3E']) {
 // ---------- how it works: a card of J.D.'s instructions, in pencil ----------
 // with a finger it is tapping, not clicking, and there are no keys to press
 const helpLines = () => {
-  const who = typeof WHO_ALL !== 'undefined' ? WHO_ALL[WHO].word : 'de assistent';
+  const who = typeof WHO_ALL !== 'undefined' ? tr(WHO_ALL[WHO].word) : tr('de assistent');
   return [
-    `${TOUCH ? 'Tik' : 'Klik'} op iets in de kamer: ${who} loopt erheen.`,
-    'Bij een kast: pak de envelop van de la die aan de beurt is. Hij gaat mee naar de leestafel.',
-    `Op tafel: maak de envelop open, lees de kaarten (${TOUCH ? '“Omdraaien”' : 'F'} draait ze om), leg ze neer.`,
-    'Wat op de envelop staat, is de opdracht. “Vraag J.D.” kost tijd op de klok.',
-    'Een kaart kan mee in de hand, naar een kast, het raam, de deur, de machine.',
-    'Gaat het slot open, dan gaat de envelop dicht: neem hem mee en voeg hem in zijn la in.',
-    TOUCH ? 'De hand houdt één ding. “Terug”, linksboven: terug.' : 'De hand houdt één ding. Esc of de rechterknop: terug.',
+    tr(TOUCH ? 'Tik op iets in de kamer: {who} loopt erheen.' : 'Klik op iets in de kamer: {who} loopt erheen.', { who }),
+    tr('Bij een kast: pak de envelop van de la die aan de beurt is. Hij gaat mee naar de leestafel.'),
+    tr('Op tafel: maak de envelop open, lees de kaarten ({flip} draait ze om), leg ze neer.', { flip: TOUCH ? tr('“Omdraaien”') : 'F' }),
+    tr('Wat op de envelop staat, is de opdracht. “Vraag J.D.” kost tijd op de klok.'),
+    tr('Een kaart kan mee in de hand, naar een kast, het raam, de deur, de machine.'),
+    tr('Gaat het slot open, dan gaat de envelop dicht: neem hem mee en voeg hem in zijn la in.'),
+    tr(TOUCH ? 'De hand houdt één ding. “Terug”, linksboven: terug.' : 'De hand houdt één ding. Esc of de rechterknop: terug.'),
   ];
 };
 const HELP = { on: false, t0: 0 };
@@ -197,7 +198,7 @@ function drawHelp() {
   for (let y = -h / 2 + 150; y < h / 2 - 20; y += 64) { C.beginPath(); C.moveTo(-w / 2 + 20, y); C.lineTo(w / 2 - 20, y); C.stroke(); }
   C.restore();
   handText('Nachtdienst', -w / 2 + 60, -h / 2 + 96, 58, '#3A3248', { font: FONT.fell, j: 0 });
-  handText('— zo gaat het —', -w / 2 + 380, -h / 2 + 96, 34, '#6A6070', { font: FONT.hand, j: 0 });
+  handText(tr('— zo gaat het —'), -w / 2 + 380, -h / 2 + 96, 34, '#6A6070', { font: FONT.hand, j: 0 });
   let y = -h / 2 + 140;
   for (const l of helpLines()) y += pencilNote(l, -w / 2 + 60, y + 4, w - 120, 34, { rot: 0, col: '#3A3248' }) + 22;
   handText('J.D.', w / 2 - 80, h / 2 - 36, 40, '#3A3248', { font: FONT.hand, weight: 600, align: 'right', j: 0 });
@@ -215,7 +216,7 @@ const COLOFON_LINES = [
   ['Geluid', 'kaarten en enveloppen: Kenney (CC0); de rest gesynthetiseerd'],
   ['Kaart', 'Natural Earth; plaatsnamen: GeoNames (CC BY 4.0)'],
   ['Letters', 'Special Elite, Caveat, Homemade Apple, IM Fell English (OFL)'],
-];
+].map(l => l.map(s => tr(s)));
 function drawColofon() {
   if (!COLOFON.on) return;
   const k = backOut(clamp((T - COLOFON.t0) / .35));
@@ -229,7 +230,7 @@ function drawColofon() {
   for (let y = -h / 2 + 196; y < h / 2 - 30; y += 70) { C.beginPath(); C.moveTo(-w / 2 + 30, y); C.lineTo(w / 2 - 30, y); C.stroke(); }
   C.restore();
   typedText('NACHTDIENST', -w / 2 + 60, -h / 2 + 96, 46, '#2A2630', { seed: 3 });
-  handText('Colofon', w / 2 - 60, -h / 2 + 96, 44, PAL.red, { font: FONT.hand, weight: 600, align: 'right', j: .3 });
+  handText(tr('Colofon'), w / 2 - 60, -h / 2 + 96, 44, PAL.red, { font: FONT.hand, weight: 600, align: 'right', j: .3 });
   COLOFON_LINES.forEach(([lab, txt], i) => {
     const y = -h / 2 + 184 + i * 70;
     handText(lab, -w / 2 + 60, y, 30, '#6A6070', { font: FONT.hand, weight: 600, j: 0 });
@@ -237,14 +238,14 @@ function drawColofon() {
     typedText(txt, -w / 2 + 250, y, size, '#2A2630', { seed: 10 + i });
   });
   // which version this is, in pencil in the corner (worth knowing when a fix has not arrived yet)
-  if (VERSION) handText('versie ' + VERSION, w / 2 - 40, h / 2 - 22, 22, '#8A7F92', { font: FONT.hand, align: 'right', j: 0 });
+  if (VERSION) handText(tr('versie') + ' ' + VERSION, w / 2 - 40, h / 2 - 22, 22, '#8A7F92', { font: FONT.hand, align: 'right', j: 0 });
   pop();
 }
 function colofonToggle(on = !COLOFON.on) { COLOFON.on = on; COLOFON.t0 = T; SND.card(); }
 
 // ---------- captions: what is heard, for whoever cannot hear it ----------
 const CAPS = [];
-function caption(txt, secs = 2.6) { if (CAPS.some(c => c.txt === txt && T - c.t < 1)) return; CAPS.push({ txt, t: T, secs }); if (CAPS.length > 3) CAPS.shift(); }
+function caption(txt, secs = 2.6) { txt = tr(txt); if (CAPS.some(c => c.txt === txt && T - c.t < 1)) return; CAPS.push({ txt, t: T, secs }); if (CAPS.length > 3) CAPS.shift(); }
 function drawCaptions() {
   let y = H - 34;
   for (let i = CAPS.length - 1; i >= 0; i--) {

@@ -1,0 +1,390 @@
+{
+ "p1": [
+  {
+   "nl": [
+    "domenee",
+    "domine",
+    "dominee",
+    "predikant"
+   ],
+   "en": "minister",
+   "accept": [
+    "minister",
+    "vicar",
+    "pastor",
+    "preacher",
+    "parson",
+    "reverend",
+    "clergyman",
+    "dominee",
+    "domine"
+   ]
+  },
+  {
+   "nl": [
+    "zakdoek",
+    "zakdoeken"
+   ],
+   "en": "handkerchief",
+   "accept": [
+    "handkerchief",
+    "hanky",
+    "hankie",
+    "kerchief"
+   ]
+  },
+  {
+   "nl": [
+    "veulen",
+    "veulens",
+    "veulentje"
+   ],
+   "en": "foal",
+   "accept": [
+    "foal",
+    "colt",
+    "filly"
+   ]
+  },
+  {
+   "nl": [
+    "bijl",
+    "bijlen"
+   ],
+   "en": "axe",
+   "accept": [
+    "axe",
+    "ax",
+    "hatchet"
+   ]
+  },
+  {
+   "nl": [
+    "grenssteen",
+    "grensstenen",
+    "reinsteen",
+    "steen",
+    "steentje",
+    "stenen",
+    "greanssteen",
+    "laoksteen",
+    "loaksteen",
+    "voersteen"
+   ],
+   "en": "stone",
+   "accept": [
+    "stone",
+    "boundary stone",
+    "boulder",
+    "rock"
+   ]
+  },
+  {
+   "nl": [
+    "konijn",
+    "konijnen",
+    "konijntje",
+    "konijntjes"
+   ],
+   "en": "rabbit",
+   "accept": [
+    "rabbit",
+    "bunny"
+   ]
+  },
+  {
+   "nl": [
+    "boerenknecht",
+    "knecht",
+    "knechten",
+    "medeknecht",
+    "molenaarsknecht"
+   ],
+   "en": "farmhand",
+   "accept": [
+    "farmhand",
+    "farm hand",
+    "hand",
+    "servant",
+    "labourer",
+    "laborer",
+    "hired hand",
+    "hired man",
+    "workman"
+   ]
+  },
+  {
+   "nl": [
+    "doodshemd",
+    "doodskleed",
+    "kleed",
+    "laken",
+    "lijkkleed"
+   ],
+   "en": "shroud",
+   "accept": [
+    "shroud",
+    "sheet",
+    "cloth",
+    "winding sheet",
+    "burial cloth",
+    "death shirt",
+    "garment"
+   ]
+  },
+  {
+   "nl": [
+    "boot",
+    "bootje",
+    "boten",
+    "scheep",
+    "scheepje",
+    "schepen",
+    "schip",
+    "schuit"
+   ],
+   "en": "ship",
+   "accept": [
+    "ship",
+    "boat",
+    "vessel",
+    "barge"
+   ]
+  },
+  {
+   "nl": [
+    "centen",
+    "duiten",
+    "geld",
+    "geldstuk",
+    "geldstukken"
+   ],
+   "en": "money",
+   "accept": [
+    "money",
+    "coin",
+    "coins",
+    "cash",
+    "pennies"
+   ]
+  },
+  {
+   "nl": [
+    "duivelbanner",
+    "duivelsbanner",
+    "duvelbanner"
+   ],
+   "en": "exorcist",
+   "accept": [
+    "exorcist",
+    "devil banisher",
+    "devil-banisher",
+    "banisher"
+   ]
+  },
+  {
+   "nl": [
+    "schuren",
+    "schuur"
+   ],
+   "en": "barn",
+   "accept": [
+    "barn",
+    "shed"
+   ]
+  }
+ ],
+ "p5": [
+  {
+   "nl": [
+    "schort",
+    "schorten",
+    "schortje"
+   ],
+   "en": "apron",
+   "accept": [
+    "apron",
+    "pinafore"
+   ]
+  },
+  {
+   "nl": [
+    "doodshemd",
+    "doodskleed",
+    "kleed",
+    "laken",
+    "lijkkleed"
+   ],
+   "en": "shroud",
+   "accept": [
+    "shroud",
+    "sheet",
+    "cloth",
+    "winding sheet",
+    "burial cloth",
+    "death shirt"
+   ]
+  },
+  {
+   "nl": [
+    "paard",
+    "paarden",
+    "paardje",
+    "paerd",
+    "peerd",
+    "ros"
+   ],
+   "en": "horse",
+   "accept": [
+    "horse",
+    "horseback",
+    "steed",
+    "mare",
+    "stallion"
+   ]
+  },
+  {
+   "nl": [
+    "nacht",
+    "nachts"
+   ],
+   "en": "night",
+   "accept": [
+    "night",
+    "at night",
+    "nighttime",
+    "night-time"
+   ]
+  },
+  {
+   "nl": [
+    "dageraad",
+    "morgens",
+    "ochtend"
+   ],
+   "en": "morning",
+   "accept": [
+    "morning",
+    "in the morning",
+    "dawn",
+    "daybreak"
+   ]
+  },
+  {
+   "nl": [
+    "avond",
+    "avonds",
+    "schemer",
+    "schemeravond",
+    "schemering"
+   ],
+   "en": "evening",
+   "accept": [
+    "evening",
+    "in the evening",
+    "dusk",
+    "twilight"
+   ]
+  },
+  {
+   "nl": [
+    "zakdoek",
+    "zakdoeken"
+   ],
+   "en": "handkerchief",
+   "accept": [
+    "handkerchief",
+    "hanky",
+    "hankie",
+    "kerchief"
+   ]
+  },
+  {
+   "nl": [
+    "12 uur",
+    "middernacht",
+    "midnacht",
+    "twaalf uur"
+   ],
+   "en": "midnight",
+   "accept": [
+    "midnight",
+    "twelve o'clock",
+    "12 o'clock",
+    "twelve",
+    "12"
+   ]
+  }
+ ],
+ "cues": {
+  "vrouw": "woman",
+  "boer": "farmer",
+  "man": "man",
+  "hond": "dog",
+  "boerderij": "farm",
+  "jongen": "boy",
+  "dominee": "minister",
+  "schipper": "skipper",
+  "kist": "chest",
+  "meisje": "girl",
+  "knecht": "farmhand",
+  "zakdoek": "handkerchief",
+  "soldaat": "soldier",
+  "kasteel": "castle",
+  "huis": "house",
+  "veulen": "foal",
+  "boter": "butter",
+  "lamp": "lamp",
+  "wagen": "cart",
+  "paard": "horse",
+  "voerman": "carter",
+  "kerk": "church"
+ },
+ "cue_fix": {
+  "30422:voerman": "driver",
+  "30422:wagen": "wagon",
+  "16498:man": "men"
+ },
+ "halves": {
+  "19734:143": "and it does happen.",
+  "20911:113": "something she saw coming",
+  "29729:93": "But when they go to look",
+  "12173:121": "fed up with it and wants",
+  "32713:91": "The man cannot bear it",
+  "13635:236": "forgotten the rhyme.",
+  "27201:160": "They go around them.",
+  "130818:70": "notices that at midnight",
+  "16498:88": "Near Bergumerheide",
+  "17074:91": "He knew everything in advance",
+  "27284:74": "Once, on his way home",
+  "13289:133": "to the witte wieven, an axe",
+  "207818:59": "as it is often depicted",
+  "41806:150": "were dressed in snow-white",
+  "26902:170": "Then he disappears.",
+  "49658:115": "werewolf. When he once again",
+  "128342:171": "On the priest's advice",
+  "24049:115": "girl always did sewing",
+  "13413:315": "two fiery eyes would",
+  "35588:128": "and a moment later he was",
+  "43622:59": "cowshed is built",
+  "35897:91": "When they threw the skin",
+  "37572:119": "many people are standing",
+  "210555:84": "who advises putting",
+  "13500:167": "everyone stays seated",
+  "128641:72": "the ghosts with a red handkerchief",
+  "38698:79": "after he died, and he comes",
+  "16844:47": "Someone there said",
+  "50001:63": "places is that after his death",
+  "12146:119": "that crossroads and saw",
+  "69775:66": "never dared to put red sails",
+  "16510:134": "five women standing there",
+  "30422:270": "not at all afraid of the ghost",
+  "15532:60": "he hears a voice close by",
+  "13529:142": "over it but floats",
+  "38979:280": "told him to beforehand",
+  "30422:440": "clock strikes two, the wagon",
+  "13413:130": "of the road or into the verge",
+  "16083:242": "their two half-year-old children"
+ },
+ "fixes": {}
+}
