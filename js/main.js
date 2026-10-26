@@ -42,6 +42,7 @@ function frame(now) {
       if (G.view === 'room') { if (G.S.hand) drawHand(G, 170, H - 84); }
     } else v.draw();
     if (G.view !== 'title' && G.view !== 'intro' && G.view !== 'final' && !G.reader) cornerTags();
+    if (G.view !== 'title' && G.view !== 'intro' && G.view !== 'final') TUT.draw();
     UI.drawNotes();
     drawCaptions();
     drawHelp();

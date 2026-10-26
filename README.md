@@ -10,7 +10,8 @@ Animation Base's character, are one URL parameter away.
 dicht. Sluit af vóór twaalven."* Four card cabinets, three drawers each: two card puzzles and one *room lock*, a
 thing in the room that is the lock (the clock, the window, the door, the typewriter). Solving a lock is knowing;
 inserting the cards is filing, and only filing counts. The cabinet you are working on leaks into the room until it
-is filed. Nobody explains that.
+is filed. Nobody explains that. Only the first cabinet is taught: until it is filed, a slip of J.D.'s pencil says
+what to do next and a red ring goes round where (the × on the slip does without).
 
 The puzzles are the original game's, night for night: the 120 nights in `data/nights/` are the bundles its pipeline
 made from the Nederlandse Volksverhalenbank, and the archive behind the dividers is the same 9,659 stories.
@@ -121,6 +122,7 @@ js/game.js         the night: drawer states, envelopes, the hand, filing, locks,
 js/views.js        the room, the table, a cabinet up close, the archive behind the divider, the reader
 js/views2.js       the map, typewriter, clock, window, door, cabinet V, halves, strongbox, title, endings
 js/night.js        the director: leaks, room locks waking, enactments, reactions
+js/tutorial.js     the first cabinet, taught: a pencil slip with the next step, a red ring round where
 js/feast.js        the real calendar outside: tonight's moon, and a few nights of the year (no spoilers)
 js/dev.js          a back door for testing (below)
 js/admin.js        the admin panel on top of it (?admin)
